@@ -19,7 +19,7 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
   double bsize = 85;
   double bheight = 60;
 
-  Future<bool> isAuthenticated(String inputPassword) async {
+  Future<bool> authenticate(String inputPassword) async {
     final secureStorage = FlutterSecureStorage();
     final storedPassword = await secureStorage.read(key: 'password');
     return storedPassword == inputPassword;
@@ -47,691 +47,629 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 146, 144, 143),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              padding: const EdgeInsets.all(8),
-              height: 50,
-              width: 370,
-              child: Text(
-                exp,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 30,
-                ),
-                textAlign: TextAlign.end,
-              ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: const Color.fromRGBO(255, 255, 255, 1),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              margin: const EdgeInsets.all(8),
-              height: 50,
-              width: 370,
-              child: TextField(
-                readOnly: true,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 30,
-                ),
-                decoration: InputDecoration(
-                  hintText: textEditingController.text,
-                  hintStyle: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 30,
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 146, 144, 143),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    padding: const EdgeInsets.all(8),
+                    height: 50,
+                    // width: 370,
+                    child: Text(
+                      exp,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 30,
+                      ),
+                      textAlign: TextAlign.end,
+                    ),
                   ),
-                  prefixIcon: IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: () {
-                      setState(() {
-                        textEditingController.text = "";
-                        exp = "";
-                      });
-                    },
-                  ),
-                  enabledBorder: textFieldBorder,
-                  focusedBorder: textFieldBorder,
                 ),
-                controller: textEditingController,
-                textAlign: TextAlign.end,
-              ),
+              ],
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(bmargin),
-                      child: TextButton.icon(
-                        icon: Icon(Icons.backspace_sharp),
-                        label: Text(""),
-                        onPressed: () {
-                          setState(() {
-                            if (textEditingController.text.isNotEmpty) {
-                              textEditingController.text =
-                                  textEditingController.text.substring(
-                                      0, textEditingController.text.length - 1);
-                            }
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.black),
-                          minimumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                          maximumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                        ),
-                      ),
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color.fromRGBO(255, 255, 255, 1),
+                      borderRadius: BorderRadius.circular(5),
                     ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(bmargin),
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            textEditingController.text =
-                                "${textEditingController.text}(";
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.black),
-                          minimumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                          maximumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                        ),
-                        child: const Text(
-                          "(",
-                          style: TextStyle(fontSize: 33),
-                        ),
+                    margin: const EdgeInsets.all(8),
+                    height: 50,
+                    // width: 370,
+                    child: TextField(
+                      readOnly: true,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 30,
                       ),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(bmargin),
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
+                      decoration: InputDecoration(
+                        hintText: textEditingController.text,
+                        hintStyle: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 30,
+                        ),
+                        prefixIcon: IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
                             setState(() {
-                              textEditingController.text =
-                                  "${textEditingController.text})";
+                              textEditingController.text = "";
+                              exp = "";
                             });
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.black),
-                          minimumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                          maximumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                          },
                         ),
-                        child: const Text(
-                          ")",
-                          style: TextStyle(fontSize: 33),
-                        ),
+                        enabledBorder: textFieldBorder,
+                        focusedBorder: textFieldBorder,
                       ),
+                      controller: textEditingController,
+                      textAlign: TextAlign.end,
                     ),
-                  ],
+                  ),
                 ),
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(bmargin),
-                      child: TextButton(
-                        onPressed: () async {
-                          if (await isAuthenticated(textEditingController.text)) {
-                            textEditingController.text="";
-                            exp = textEditingController.text;
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => VaultPage(
-                                          title: 'Vault Opend',
-                                        )));
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton.icon(
+                      icon: Icon(Icons.backspace_sharp),
+                      label: Text(""),
+                      onPressed: () {
+                        setState(() {
+                          if (textEditingController.text.isNotEmpty) {
+                            textEditingController.text =
+                                textEditingController.text.substring(
+                                    0, textEditingController.text.length - 1);
                           }
-                          setState(() {
-                            exp = textEditingController.text;
-                            try {
-                              Parser parser = Parser();
-                              Expression expression = parser.parse(exp);
-                              ContextModel contextModel = ContextModel();
-                              textEditingController.text = expression
-                                  .evaluate(EvaluationType.REAL, contextModel)
-                                  .toString();
-                            } catch (e) {
-                              debugPrint("Error : $e");
-                            }
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.black),
-                          minimumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                          maximumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                        ),
-                        child: const Text(
-                          "=",
-                          style: TextStyle(fontSize: 33),
-                        ),
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(bmargin),
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            textEditingController.text =
-                                "${textEditingController.text}7";
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.black),
-                          minimumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                          maximumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                        ),
-                        child: const Text(
-                          "7",
-                          style: TextStyle(fontSize: 33),
-                        ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}(";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "(",
+                        style: TextStyle(fontSize: 33),
                       ),
                     ),
-                  ],
+                  ),
                 ),
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(bmargin),
-                      child: TextButton(
-                        onPressed: () {
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
                           setState(() {
                             textEditingController.text =
-                                "${textEditingController.text}8";
+                                "${textEditingController.text})";
                           });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.black),
-                          minimumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                          maximumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                        ),
-                        child: const Text(
-                          "8",
-                          style: TextStyle(fontSize: 33),
-                        ),
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        ")",
+                        style: TextStyle(fontSize: 33),
                       ),
                     ),
-                  ],
+                  ),
                 ),
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(bmargin),
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            textEditingController.text =
-                                "${textEditingController.text}9";
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.black),
-                          minimumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                          maximumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                        ),
-                        child: const Text(
-                          "9",
-                          style: TextStyle(fontSize: 33),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(bmargin),
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            textEditingController.text =
-                                "${textEditingController.text}+";
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.black),
-                          minimumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                          maximumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                        ),
-                        child: const Text(
-                          "+",
-                          style: TextStyle(fontSize: 33),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(bmargin),
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            textEditingController.text =
-                                "${textEditingController.text}4";
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.black),
-                          minimumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                          maximumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                        ),
-                        child: const Text(
-                          "4",
-                          style: TextStyle(fontSize: 33),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(bmargin),
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            textEditingController.text =
-                                "${textEditingController.text}5";
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.black),
-                          minimumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                          maximumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                        ),
-                        child: const Text(
-                          "5",
-                          style: TextStyle(fontSize: 33),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(bmargin),
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            textEditingController.text =
-                                "${textEditingController.text}6";
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.black),
-                          minimumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                          maximumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                        ),
-                        child: const Text(
-                          "6",
-                          style: TextStyle(fontSize: 33),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(bmargin),
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            textEditingController.text =
-                                "${textEditingController.text}-";
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.black),
-                          minimumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                          maximumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                        ),
-                        child: const Text(
-                          "-",
-                          style: TextStyle(fontSize: 33),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(bmargin),
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            textEditingController.text =
-                                "${textEditingController.text}1";
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.black),
-                          minimumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                          maximumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                        ),
-                        child: const Text(
-                          "1",
-                          style: TextStyle(fontSize: 33),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(bmargin),
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            textEditingController.text =
-                                "${textEditingController.text}2";
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.black),
-                          minimumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                          maximumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                        ),
-                        child: const Text(
-                          "2",
-                          style: TextStyle(fontSize: 33),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(bmargin),
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            textEditingController.text =
-                                "${textEditingController.text}3";
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.black),
-                          minimumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                          maximumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                        ),
-                        child: const Text(
-                          "3",
-                          style: TextStyle(fontSize: 33),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(bmargin),
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            textEditingController.text =
-                                "${textEditingController.text}*";
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.black),
-                          minimumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                          maximumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                        ),
-                        child: const Text(
-                          "x",
-                          style: TextStyle(fontSize: 33),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(bmargin),
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            textEditingController.text =
-                                "${textEditingController.text}0";
-                          });
-                        },
-                        onLongPress: () {
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () async {
+                        String inputPassword = textEditingController.text;
+                        bool isAuthenticated =
+                            await authenticate(inputPassword);
+                        if (isAuthenticated) {
+                          textEditingController.text = "";
+                          exp = textEditingController.text;
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => AuthendicationPage(
-                                        title: 'Authendication Needed',
+                                  builder: (context) => const VaultPage(
+                                        title: 'Vault Opend',
                                       )));
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.black),
-                          minimumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                          maximumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                        ),
-                        child: const Text(
-                          "0",
-                          style: TextStyle(fontSize: 33),
-                        ),
+                        }
+                        setState(() {
+                          exp = textEditingController.text;
+                          try {
+                            Parser parser = Parser();
+                            Expression expression = parser.parse(exp);
+                            ContextModel contextModel = ContextModel();
+                            textEditingController.text = expression
+                                .evaluate(EvaluationType.REAL, contextModel)
+                                .toString();
+                          } catch (e) {
+                            debugPrint("Error : $e");
+                          }
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "=",
+                        style: TextStyle(fontSize: 33),
                       ),
                     ),
-                  ],
+                  ),
                 ),
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(bmargin),
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            textEditingController.text =
-                                "${textEditingController.text}.";
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.black),
-                          minimumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                          maximumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                        ),
-                        child: const Text(
-                          ".",
-                          style: TextStyle(fontSize: 33),
-                        ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}7";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "7",
+                        style: TextStyle(fontSize: 33),
                       ),
                     ),
-                  ],
+                  ),
                 ),
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(bmargin),
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            textEditingController.text =
-                                "${textEditingController.text}%";
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.black),
-                          minimumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                          maximumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                        ),
-                        child: const Text(
-                          "%",
-                          style: TextStyle(fontSize: 33),
-                        ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}8";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "8",
+                        style: TextStyle(fontSize: 33),
                       ),
                     ),
-                  ],
+                  ),
                 ),
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(bmargin),
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            textEditingController.text =
-                                "${textEditingController.text}/";
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              const MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              const MaterialStatePropertyAll(Colors.black),
-                          minimumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                          maximumSize:
-                              MaterialStatePropertyAll(Size(bsize, bheight)),
-                        ),
-                        child: const Text(
-                          "/",
-                          style: TextStyle(fontSize: 33),
-                        ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}9";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "9",
+                        style: TextStyle(fontSize: 33),
                       ),
                     ),
-                  ],
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}+";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "+",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}4";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "4",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}5";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "5",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}6";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "6",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}-";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "-",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}1";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "1",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}2";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "2",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}3";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "3",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}*";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "x",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}0";
+                        });
+                      },
+                      onLongPress: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AuthendicationPage(
+                                      title: 'Authendication Needed',
+                                    )));
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "0",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}.";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        ".",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}%";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "%",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}/";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "/",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
