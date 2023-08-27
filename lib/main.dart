@@ -28,13 +28,16 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   TextEditingController textEditingController = TextEditingController();
-  String exp = "eg:1+1";
+  String exp = "0+0";
+  double bmargin = 5;
+  double bsize = 85;
+  double bheight = 60;
 
-  void _incrementCounter() {
-    setState(() {
-      // _counter++;
-    });
-  }
+  // void _incrementCounter() {
+  //   setState(() {
+  //     // _counter++;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -47,52 +50,54 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           children: <Widget>[
             Container(
-              margin: const EdgeInsets.fromLTRB(8, 180, 8, 3),
-              color: Colors.white,
+              margin: const EdgeInsets.fromLTRB(8, 200, 8, 3),
+              padding: const EdgeInsets.all(8),
+              color: const Color.fromRGBO(255, 255, 255, 1),
               height: 50,
-              child: Align(
-                alignment: Alignment.centerRight,
+              width: 400,
                 child: Text(
                   exp,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.grey,
                     fontSize: 30,
                   ),
+                  textAlign: TextAlign.end,
                 ),
-              ),
+            
             ),
             Container(
               margin: const EdgeInsets.all(8),
               height: 50,
+              width: 400,
               color: Colors.white,
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: TextField(
-                  readOnly: true,
-                  style: TextStyle(
+              child: TextField(
+                readOnly: true,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 30,
+                ),
+                decoration: InputDecoration(
+                  hintText: "0+0",
+                  hintStyle: const TextStyle(
                     color: Colors.black,
                     fontSize: 30,
-                   ),
-                  decoration: InputDecoration(
-                    hintText: "1+2",
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.clear),
-                      onPressed: (){}, 
-                      ),
                   ),
-                  controller: textEditingController,
+                  prefixIcon: IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {},
+                  ),
                 ),
+                controller: textEditingController,
+                textAlign: TextAlign.end,
               ),
             ),
-
-
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Column(
                   children: [
                     Container(
-                      margin: const EdgeInsets.all(18),
+                      margin: EdgeInsets.all(bmargin),
                       child: TextButton.icon(
                         icon: Icon(Icons.backspace),
                         label: Text(""),
@@ -101,13 +106,15 @@ class _MyHomePageState extends State<MyHomePage> {
                             // result = double.parse(textEditingController.text) * 82.55;
                           });
                         },
-                        style: const ButtonStyle(
+                        style: ButtonStyle(
                           backgroundColor:
                               MaterialStatePropertyAll(Colors.white),
                           foregroundColor:
                               MaterialStatePropertyAll(Colors.black),
-                          minimumSize: MaterialStatePropertyAll(Size(60, 60)),
-                          maximumSize: MaterialStatePropertyAll(Size(60, 60)),
+                          minimumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                          maximumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
                         ),
                       ),
                     ),
@@ -116,20 +123,22 @@ class _MyHomePageState extends State<MyHomePage> {
                 Column(
                   children: [
                     Container(
-                      margin: const EdgeInsets.all(18),
+                      margin: EdgeInsets.all(bmargin),
                       child: TextButton(
                         onPressed: () {
                           setState(() {
                             // result = double.parse(textEditingController.text) * 82.55;
                           });
                         },
-                        style: const ButtonStyle(
+                        style: ButtonStyle(
                           backgroundColor:
                               MaterialStatePropertyAll(Colors.white),
                           foregroundColor:
                               MaterialStatePropertyAll(Colors.black),
-                          minimumSize: MaterialStatePropertyAll(Size(60, 60)),
-                          maximumSize: MaterialStatePropertyAll(Size(60, 60)),
+                          minimumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                          maximumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
                         ),
                         child: const Text(
                           "(",
@@ -142,20 +151,22 @@ class _MyHomePageState extends State<MyHomePage> {
                 Column(
                   children: [
                     Container(
-                      margin: const EdgeInsets.all(18),
+                      margin: EdgeInsets.all(bmargin),
                       child: TextButton(
                         onPressed: () {
                           setState(() {
                             // result = double.parse(textEditingController.text) * 82.55;
                           });
                         },
-                        style: const ButtonStyle(
+                        style: ButtonStyle(
                           backgroundColor:
                               MaterialStatePropertyAll(Colors.white),
                           foregroundColor:
                               MaterialStatePropertyAll(Colors.black),
-                          minimumSize: MaterialStatePropertyAll(Size(60, 60)),
-                          maximumSize: MaterialStatePropertyAll(Size(60, 60)),
+                          minimumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                          maximumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
                         ),
                         child: const Text(
                           ")",
@@ -168,20 +179,22 @@ class _MyHomePageState extends State<MyHomePage> {
                 Column(
                   children: [
                     Container(
-                      margin: const EdgeInsets.all(18),
+                      margin: EdgeInsets.all(bmargin),
                       child: TextButton(
                         onPressed: () {
                           setState(() {
                             // result = double.parse(textEditingController.text) * 82.55;
                           });
                         },
-                        style: const ButtonStyle(
+                        style: ButtonStyle(
                           backgroundColor:
                               MaterialStatePropertyAll(Colors.white),
                           foregroundColor:
                               MaterialStatePropertyAll(Colors.black),
-                          minimumSize: MaterialStatePropertyAll(Size(60, 60)),
-                          maximumSize: MaterialStatePropertyAll(Size(60, 60)),
+                          minimumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                          maximumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
                         ),
                         child: const Text(
                           "=",
@@ -199,47 +212,25 @@ class _MyHomePageState extends State<MyHomePage> {
                 Column(
                   children: [
                     Container(
-                      margin: const EdgeInsets.all(18),
-                      child: TextButton.icon(
-                        icon: Icon(Icons.backspace),
-                        label: Text(""),
-                        onPressed: () {
-                          setState(() {
-                            // result = double.parse(textEditingController.text) * 82.55;
-                          });
-                        },
-                        style: const ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.black),
-                          minimumSize: MaterialStatePropertyAll(Size(60, 60)),
-                          maximumSize: MaterialStatePropertyAll(Size(60, 60)),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.all(18),
+                      margin: EdgeInsets.all(bmargin),
                       child: TextButton(
                         onPressed: () {
                           setState(() {
                             // result = double.parse(textEditingController.text) * 82.55;
                           });
                         },
-                        style: const ButtonStyle(
+                        style: ButtonStyle(
                           backgroundColor:
                               MaterialStatePropertyAll(Colors.white),
                           foregroundColor:
                               MaterialStatePropertyAll(Colors.black),
-                          minimumSize: MaterialStatePropertyAll(Size(60, 60)),
-                          maximumSize: MaterialStatePropertyAll(Size(60, 60)),
+                          minimumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                          maximumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
                         ),
                         child: const Text(
-                          "(",
+                          "7",
                           style: TextStyle(fontSize: 33),
                         ),
                       ),
@@ -249,23 +240,25 @@ class _MyHomePageState extends State<MyHomePage> {
                 Column(
                   children: [
                     Container(
-                      margin: const EdgeInsets.all(18),
+                      margin: EdgeInsets.all(bmargin),
                       child: TextButton(
                         onPressed: () {
                           setState(() {
                             // result = double.parse(textEditingController.text) * 82.55;
                           });
                         },
-                        style: const ButtonStyle(
+                        style: ButtonStyle(
                           backgroundColor:
                               MaterialStatePropertyAll(Colors.white),
                           foregroundColor:
                               MaterialStatePropertyAll(Colors.black),
-                          minimumSize: MaterialStatePropertyAll(Size(60, 60)),
-                          maximumSize: MaterialStatePropertyAll(Size(60, 60)),
+                          minimumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                          maximumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
                         ),
                         child: const Text(
-                          ")",
+                          "8",
                           style: TextStyle(fontSize: 33),
                         ),
                       ),
@@ -275,23 +268,53 @@ class _MyHomePageState extends State<MyHomePage> {
                 Column(
                   children: [
                     Container(
-                      margin: const EdgeInsets.all(18),
+                      margin: EdgeInsets.all(bmargin),
                       child: TextButton(
                         onPressed: () {
                           setState(() {
                             // result = double.parse(textEditingController.text) * 82.55;
                           });
                         },
-                        style: const ButtonStyle(
+                        style: ButtonStyle(
                           backgroundColor:
                               MaterialStatePropertyAll(Colors.white),
                           foregroundColor:
                               MaterialStatePropertyAll(Colors.black),
-                          minimumSize: MaterialStatePropertyAll(Size(60, 60)),
-                          maximumSize: MaterialStatePropertyAll(Size(60, 60)),
+                          minimumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                          maximumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
                         ),
                         child: const Text(
-                          "=",
+                          "9",
+                          style: TextStyle(fontSize: 33),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.all(bmargin),
+                      child: TextButton(
+                        onPressed: () {
+                          setState(() {
+                            // result = double.parse(textEditingController.text) * 82.55;
+                          });
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.white),
+                          foregroundColor:
+                              MaterialStatePropertyAll(Colors.black),
+                          minimumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                          maximumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                        ),
+                        child: const Text(
+                          "+",
                           style: TextStyle(fontSize: 33),
                         ),
                       ),
@@ -306,47 +329,25 @@ class _MyHomePageState extends State<MyHomePage> {
                 Column(
                   children: [
                     Container(
-                      margin: const EdgeInsets.all(18),
-                      child: TextButton.icon(
-                        icon: Icon(Icons.backspace),
-                        label: Text(""),
-                        onPressed: () {
-                          setState(() {
-                            // result = double.parse(textEditingController.text) * 82.55;
-                          });
-                        },
-                        style: const ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.black),
-                          minimumSize: MaterialStatePropertyAll(Size(60, 60)),
-                          maximumSize: MaterialStatePropertyAll(Size(60, 60)),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.all(18),
+                      margin: EdgeInsets.all(bmargin),
                       child: TextButton(
                         onPressed: () {
                           setState(() {
                             // result = double.parse(textEditingController.text) * 82.55;
                           });
                         },
-                        style: const ButtonStyle(
+                        style: ButtonStyle(
                           backgroundColor:
                               MaterialStatePropertyAll(Colors.white),
                           foregroundColor:
                               MaterialStatePropertyAll(Colors.black),
-                          minimumSize: MaterialStatePropertyAll(Size(60, 60)),
-                          maximumSize: MaterialStatePropertyAll(Size(60, 60)),
+                          minimumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                          maximumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
                         ),
                         child: const Text(
-                          "(",
+                          "4",
                           style: TextStyle(fontSize: 33),
                         ),
                       ),
@@ -356,23 +357,25 @@ class _MyHomePageState extends State<MyHomePage> {
                 Column(
                   children: [
                     Container(
-                      margin: const EdgeInsets.all(18),
+                      margin: EdgeInsets.all(bmargin),
                       child: TextButton(
                         onPressed: () {
                           setState(() {
                             // result = double.parse(textEditingController.text) * 82.55;
                           });
                         },
-                        style: const ButtonStyle(
+                        style: ButtonStyle(
                           backgroundColor:
                               MaterialStatePropertyAll(Colors.white),
                           foregroundColor:
                               MaterialStatePropertyAll(Colors.black),
-                          minimumSize: MaterialStatePropertyAll(Size(60, 60)),
-                          maximumSize: MaterialStatePropertyAll(Size(60, 60)),
+                          minimumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                          maximumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
                         ),
                         child: const Text(
-                          ")",
+                          "5",
                           style: TextStyle(fontSize: 33),
                         ),
                       ),
@@ -382,23 +385,53 @@ class _MyHomePageState extends State<MyHomePage> {
                 Column(
                   children: [
                     Container(
-                      margin: const EdgeInsets.all(18),
+                      margin: EdgeInsets.all(bmargin),
                       child: TextButton(
                         onPressed: () {
                           setState(() {
                             // result = double.parse(textEditingController.text) * 82.55;
                           });
                         },
-                        style: const ButtonStyle(
+                        style: ButtonStyle(
                           backgroundColor:
                               MaterialStatePropertyAll(Colors.white),
                           foregroundColor:
                               MaterialStatePropertyAll(Colors.black),
-                          minimumSize: MaterialStatePropertyAll(Size(60, 60)),
-                          maximumSize: MaterialStatePropertyAll(Size(60, 60)),
+                          minimumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                          maximumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
                         ),
                         child: const Text(
-                          "=",
+                          "6",
+                          style: TextStyle(fontSize: 33),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.all(bmargin),
+                      child: TextButton(
+                        onPressed: () {
+                          setState(() {
+                            // result = double.parse(textEditingController.text) * 82.55;
+                          });
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.white),
+                          foregroundColor:
+                              MaterialStatePropertyAll(Colors.black),
+                          minimumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                          maximumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                        ),
+                        child: const Text(
+                          "-",
                           style: TextStyle(fontSize: 33),
                         ),
                       ),
@@ -407,54 +440,31 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Column(
                   children: [
                     Container(
-                      margin: const EdgeInsets.all(18),
-                      child: TextButton.icon(
-                        icon: Icon(Icons.backspace),
-                        label: Text(""),
-                        onPressed: () {
-                          setState(() {
-                            // result = double.parse(textEditingController.text) * 82.55;
-                          });
-                        },
-                        style: const ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.black),
-                          minimumSize: MaterialStatePropertyAll(Size(60, 60)),
-                          maximumSize: MaterialStatePropertyAll(Size(60, 60)),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.all(18),
+                      margin: EdgeInsets.all(bmargin),
                       child: TextButton(
                         onPressed: () {
                           setState(() {
                             // result = double.parse(textEditingController.text) * 82.55;
                           });
                         },
-                        style: const ButtonStyle(
+                        style: ButtonStyle(
                           backgroundColor:
                               MaterialStatePropertyAll(Colors.white),
                           foregroundColor:
                               MaterialStatePropertyAll(Colors.black),
-                          minimumSize: MaterialStatePropertyAll(Size(60, 60)),
-                          maximumSize: MaterialStatePropertyAll(Size(60, 60)),
+                          minimumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                          maximumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
                         ),
                         child: const Text(
-                          "(",
+                          "1",
                           style: TextStyle(fontSize: 33),
                         ),
                       ),
@@ -464,23 +474,25 @@ class _MyHomePageState extends State<MyHomePage> {
                 Column(
                   children: [
                     Container(
-                      margin: const EdgeInsets.all(18),
+                      margin: EdgeInsets.all(bmargin),
                       child: TextButton(
                         onPressed: () {
                           setState(() {
                             // result = double.parse(textEditingController.text) * 82.55;
                           });
                         },
-                        style: const ButtonStyle(
+                        style: ButtonStyle(
                           backgroundColor:
                               MaterialStatePropertyAll(Colors.white),
                           foregroundColor:
                               MaterialStatePropertyAll(Colors.black),
-                          minimumSize: MaterialStatePropertyAll(Size(60, 60)),
-                          maximumSize: MaterialStatePropertyAll(Size(60, 60)),
+                          minimumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                          maximumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
                         ),
                         child: const Text(
-                          ")",
+                          "2",
                           style: TextStyle(fontSize: 33),
                         ),
                       ),
@@ -490,23 +502,170 @@ class _MyHomePageState extends State<MyHomePage> {
                 Column(
                   children: [
                     Container(
-                      margin: const EdgeInsets.all(18),
+                      margin: EdgeInsets.all(bmargin),
                       child: TextButton(
                         onPressed: () {
                           setState(() {
                             // result = double.parse(textEditingController.text) * 82.55;
                           });
                         },
-                        style: const ButtonStyle(
+                        style: ButtonStyle(
                           backgroundColor:
                               MaterialStatePropertyAll(Colors.white),
                           foregroundColor:
                               MaterialStatePropertyAll(Colors.black),
-                          minimumSize: MaterialStatePropertyAll(Size(60, 60)),
-                          maximumSize: MaterialStatePropertyAll(Size(60, 60)),
+                          minimumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                          maximumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
                         ),
                         child: const Text(
-                          "=",
+                          "3",
+                          style: TextStyle(fontSize: 33),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.all(bmargin),
+                      child: TextButton(
+                        onPressed: () {
+                          setState(() {
+                            // result = double.parse(textEditingController.text) * 82.55;
+                          });
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.white),
+                          foregroundColor:
+                              MaterialStatePropertyAll(Colors.black),
+                          minimumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                          maximumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                        ),
+                        child: const Text(
+                          "x",
+                          style: TextStyle(fontSize: 33),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.all(bmargin),
+                      child: TextButton(
+                        onPressed: () {
+                          setState(() {
+                            // result = double.parse(textEditingController.text) * 82.55;
+                          });
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.white),
+                          foregroundColor:
+                              MaterialStatePropertyAll(Colors.black),
+                          minimumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                          maximumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                        ),
+                        child: const Text(
+                          "0",
+                          style: TextStyle(fontSize: 33),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.all(bmargin),
+                      child: TextButton(
+                        onPressed: () {
+                          setState(() {
+                            // result = double.parse(textEditingController.text) * 82.55;
+                          });
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.white),
+                          foregroundColor:
+                              MaterialStatePropertyAll(Colors.black),
+                          minimumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                          maximumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                        ),
+                        child: const Text(
+                          ".",
+                          style: TextStyle(fontSize: 33),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.all(bmargin),
+                      child: TextButton(
+                        onPressed: () {
+                          setState(() {
+                            // result = double.parse(textEditingController.text) * 82.55;
+                          });
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.white),
+                          foregroundColor:
+                              MaterialStatePropertyAll(Colors.black),
+                          minimumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                          maximumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                        ),
+                        child: const Text(
+                          "%",
+                          style: TextStyle(fontSize: 33),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.all(bmargin),
+                      child: TextButton(
+                        onPressed: () {
+                          setState(() {
+                            // result = double.parse(textEditingController.text) * 82.55;
+                          });
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              const MaterialStatePropertyAll(Colors.white),
+                          foregroundColor:
+                              const MaterialStatePropertyAll(Colors.black),
+                          minimumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                          maximumSize:
+                              MaterialStatePropertyAll(Size(bsize, bheight)),
+                        ),
+                        child: const Text(
+                          "/",
                           style: TextStyle(fontSize: 33),
                         ),
                       ),
