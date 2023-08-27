@@ -20,7 +20,7 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   final bool isFirstTime;
 
-  MyApp(this.isFirstTime, {super.key});
+  const MyApp(this.isFirstTime, {super.key});
 
   // This widget is the root of your application.
   @override
@@ -31,8 +31,8 @@ class MyApp extends StatelessWidget {
       // home: const CalculatorPage(title: 'Calculator'),
       initialRoute: isFirstTime ? '/first' : '/second',
       routes: {
-        '/first': (context) => SetPassword(title: 'Set Password',),
-        '/second': (context) => CalculatorPage(title: 'Calculator',),
+        '/first': (context) => const SetPassword(title: 'Set Password',),
+        '/second': (context) => const CalculatorPage(title: 'Calculator',),
       }
     );
   }

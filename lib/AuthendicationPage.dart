@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:math_expressions/math_expressions.dart';
 
 import 'VaultPage.dart';
@@ -18,11 +19,11 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
   double bsize = 85;
   double bheight = 60;
 
-  // void _incrementCounter() {
-  //   setState(() {
-  //     // _counter++;
-  //   });
-  // }
+  Future<bool> isAuthenticated(String inputPassword) async {
+    final secureStorage = FlutterSecureStorage();
+    final storedPassword = await secureStorage.read(key: 'password');
+    return storedPassword == inputPassword;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -197,8 +198,8 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                     Container(
                       margin: EdgeInsets.all(bmargin),
                       child: TextButton(
-                        onPressed: () {
-                          if (textEditingController.text == "123456789") {
+                        onPressed: () async {
+                          if (await isAuthenticated(textEditingController.text)) {
                             textEditingController.text="";
                             exp = textEditingController.text;
                             Navigator.push(
