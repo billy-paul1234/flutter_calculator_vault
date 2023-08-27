@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:math_expressions/math_expressions.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,7 +29,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   TextEditingController textEditingController = TextEditingController();
-  String exp = "0+0";
+  String exp = "";
   double bmargin = 5;
   double bsize = 85;
   double bheight = 60;
@@ -41,35 +42,49 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // double screenWidth = MediaQuery.of(context).size.width;
+    // double containerWidth = screenWidth * 0.8; // 80% of the screen width
+    final textFieldBorder = OutlineInputBorder(
+      borderSide: const BorderSide(
+        style: BorderStyle.solid,
+      ),
+      borderRadius: BorderRadius.circular(0),
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      backgroundColor: Colors.black,
+      backgroundColor: const Color.fromARGB(255, 39, 38, 38),
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             Container(
-              margin: const EdgeInsets.fromLTRB(8, 200, 8, 3),
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 146, 144, 143),
+                borderRadius: BorderRadius.circular(5),
+              ),
               padding: const EdgeInsets.all(8),
-              color: const Color.fromRGBO(255, 255, 255, 1),
               height: 50,
-              width: 400,
-                child: Text(
-                  exp,
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 30,
-                  ),
-                  textAlign: TextAlign.end,
+              width: 370,
+              child: Text(
+                exp,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
                 ),
-            
+                textAlign: TextAlign.end,
+              ),
             ),
             Container(
+              decoration: BoxDecoration(
+                color: const Color.fromRGBO(255, 255, 255, 1),
+                borderRadius: BorderRadius.circular(5),
+              ),
               margin: const EdgeInsets.all(8),
               height: 50,
-              width: 400,
-              color: Colors.white,
+              width: 370,
               child: TextField(
                 readOnly: true,
                 style: const TextStyle(
@@ -77,15 +92,22 @@ class _MyHomePageState extends State<MyHomePage> {
                   fontSize: 30,
                 ),
                 decoration: InputDecoration(
-                  hintText: "0+0",
+                  hintText: textEditingController.text,
                   hintStyle: const TextStyle(
                     color: Colors.black,
                     fontSize: 30,
                   ),
                   prefixIcon: IconButton(
                     icon: const Icon(Icons.clear),
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {
+                        textEditingController.text = "";
+                        exp="";
+                      });
+                    },
                   ),
+                  enabledBorder: textFieldBorder,
+                  focusedBorder: textFieldBorder,
                 ),
                 controller: textEditingController,
                 textAlign: TextAlign.end,
@@ -99,11 +121,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     Container(
                       margin: EdgeInsets.all(bmargin),
                       child: TextButton.icon(
-                        icon: Icon(Icons.backspace),
+                        icon: Icon(Icons.backspace_sharp),
                         label: Text(""),
                         onPressed: () {
                           setState(() {
-                            // result = double.parse(textEditingController.text) * 82.55;
+                            // textEditingController = double.parse(textEditingController.text) * 82.55;
                           });
                         },
                         style: ButtonStyle(
@@ -127,7 +149,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextButton(
                         onPressed: () {
                           setState(() {
-                            // result = double.parse(textEditingController.text) * 82.55;
+                            textEditingController.text = "${textEditingController.text}(";
                           });
                         },
                         style: ButtonStyle(
@@ -155,7 +177,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextButton(
                         onPressed: () {
                           setState(() {
-                            // result = double.parse(textEditingController.text) * 82.55;
+                            setState(() {
+                            textEditingController.text = "${textEditingController.text})";
+                            });
                           });
                         },
                         style: ButtonStyle(
@@ -183,7 +207,15 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextButton(
                         onPressed: () {
                           setState(() {
-                            // result = double.parse(textEditingController.text) * 82.55;
+                            exp = textEditingController.text;
+                            try {
+                              Parser parser= Parser();
+                              Expression expression = parser.parse(exp);
+                               ContextModel contextModel =ContextModel(); 
+                              textEditingController.text = expression.evaluate(EvaluationType.REAL, contextModel).toString() ;
+                            } catch (e) {
+                              debugPrint("Error : $e");
+                            }
                           });
                         },
                         style: ButtonStyle(
@@ -216,7 +248,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextButton(
                         onPressed: () {
                           setState(() {
-                            // result = double.parse(textEditingController.text) * 82.55;
+                            textEditingController.text = "${textEditingController.text}7";
                           });
                         },
                         style: ButtonStyle(
@@ -244,7 +276,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextButton(
                         onPressed: () {
                           setState(() {
-                            // result = double.parse(textEditingController.text) * 82.55;
+                            textEditingController.text = "${textEditingController.text}8";
                           });
                         },
                         style: ButtonStyle(
@@ -272,7 +304,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextButton(
                         onPressed: () {
                           setState(() {
-                            // result = double.parse(textEditingController.text) * 82.55;
+                            textEditingController.text = "${textEditingController.text}9";
                           });
                         },
                         style: ButtonStyle(
@@ -300,7 +332,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextButton(
                         onPressed: () {
                           setState(() {
-                            // result = double.parse(textEditingController.text) * 82.55;
+                            textEditingController.text = "${textEditingController.text}+";
                           });
                         },
                         style: ButtonStyle(
@@ -333,7 +365,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextButton(
                         onPressed: () {
                           setState(() {
-                            // result = double.parse(textEditingController.text) * 82.55;
+                            textEditingController.text = "${textEditingController.text}4";
                           });
                         },
                         style: ButtonStyle(
@@ -361,7 +393,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextButton(
                         onPressed: () {
                           setState(() {
-                            // result = double.parse(textEditingController.text) * 82.55;
+                            textEditingController.text = "${textEditingController.text}5";
                           });
                         },
                         style: ButtonStyle(
@@ -389,7 +421,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextButton(
                         onPressed: () {
                           setState(() {
-                            // result = double.parse(textEditingController.text) * 82.55;
+                            textEditingController.text = "${textEditingController.text}6";
                           });
                         },
                         style: ButtonStyle(
@@ -417,7 +449,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextButton(
                         onPressed: () {
                           setState(() {
-                            // result = double.parse(textEditingController.text) * 82.55;
+                            textEditingController.text = "${textEditingController.text}-";
                           });
                         },
                         style: ButtonStyle(
@@ -450,7 +482,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextButton(
                         onPressed: () {
                           setState(() {
-                            // result = double.parse(textEditingController.text) * 82.55;
+                            textEditingController.text = "${textEditingController.text}1";
                           });
                         },
                         style: ButtonStyle(
@@ -478,7 +510,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextButton(
                         onPressed: () {
                           setState(() {
-                            // result = double.parse(textEditingController.text) * 82.55;
+                            textEditingController.text = "${textEditingController.text}2";
                           });
                         },
                         style: ButtonStyle(
@@ -506,7 +538,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextButton(
                         onPressed: () {
                           setState(() {
-                            // result = double.parse(textEditingController.text) * 82.55;
+                            textEditingController.text = "${textEditingController.text}3";
                           });
                         },
                         style: ButtonStyle(
@@ -534,7 +566,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextButton(
                         onPressed: () {
                           setState(() {
-                            // result = double.parse(textEditingController.text) * 82.55;
+                            textEditingController.text = "${textEditingController.text}*";
                           });
                         },
                         style: ButtonStyle(
@@ -567,7 +599,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextButton(
                         onPressed: () {
                           setState(() {
-                            // result = double.parse(textEditingController.text) * 82.55;
+                            textEditingController.text = "${textEditingController.text}0";
                           });
                         },
                         style: ButtonStyle(
@@ -595,7 +627,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextButton(
                         onPressed: () {
                           setState(() {
-                            // result = double.parse(textEditingController.text) * 82.55;
+                            textEditingController.text = "${textEditingController.text}.";
                           });
                         },
                         style: ButtonStyle(
@@ -623,7 +655,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextButton(
                         onPressed: () {
                           setState(() {
-                            // result = double.parse(textEditingController.text) * 82.55;
+                            textEditingController.text = "${textEditingController.text}%";
                           });
                         },
                         style: ButtonStyle(
@@ -651,7 +683,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextButton(
                         onPressed: () {
                           setState(() {
-                            // result = double.parse(textEditingController.text) * 82.55;
+                            textEditingController.text = "${textEditingController.text}/";
                           });
                         },
                         style: ButtonStyle(
