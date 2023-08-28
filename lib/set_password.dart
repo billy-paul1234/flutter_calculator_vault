@@ -1,8 +1,9 @@
-import 'dart:io';
+// import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'calculator_page.dart';
+// import 'calculator_page.dart';
+import 'instruction_page.dart';
 // import 'package:math_expressions/math_expressions.dart';
 
 class SetPassword extends StatefulWidget {
@@ -43,14 +44,14 @@ class _SetPasswordState extends State<SetPassword> {
     _setFirstTimeFlag(); // Store flag when visiting first page
 
     if (showPage2Content) {
-      return const CalculatorPage(title: 'Calculator');
+      return const InstructionPage(title: 'Calculator');
     }
     return Scaffold(
-      // backgroundColor: const Color.fromARGB(255, 40, 39, 39),
-      // drawerScrimColor: const Color.fromRGBO(255, 255, 255, 1),
-      // appBar: AppBar(
-      //   title: Text(widget.title),
-      // ),
+      backgroundColor: const Color.fromARGB(255, 40, 39, 39),
+      drawerScrimColor: const Color.fromRGBO(255, 255, 255, 1),
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,

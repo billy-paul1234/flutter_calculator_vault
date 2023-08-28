@@ -16,17 +16,22 @@ class _CalculatorPageState extends State<CalculatorPage> {
   double bmargin = 5;
   double bsize = 85;
   double bheight = 60;
+  bool showPage2Content = false;
 
-  // void _incrementCounter() {
-  //   setState(() {
-  //     // _counter++;
-  //   });
-  // }
+  void togglePage2Content() {
+    setState(() {
+      showPage2Content = !showPage2Content;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     // double screenWidth = MediaQuery.of(context).size.width;
     // double containerWidth = screenWidth * 0.8; // 80% of the screen width
+    if (showPage2Content) {
+      return const AuthendicationPage(title: 'Enter Your Password');
+    }
+
     double bsize = 85;
 
     final textFieldBorder = OutlineInputBorder(
@@ -97,7 +102,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                           onPressed: () {
                             setState(() {
                               textEditingController.text = "";
-                              exp="";
+                              exp = "";
                             });
                           },
                         ),
@@ -123,15 +128,15 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       onPressed: () {
                         setState(() {
                           if (textEditingController.text.isNotEmpty) {
-                            textEditingController.text=textEditingController.text.substring(0,textEditingController.text.length-1);
+                            textEditingController.text =
+                                textEditingController.text.substring(
+                                    0, textEditingController.text.length - 1);
                           }
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -146,14 +151,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     child: TextButton(
                       onPressed: () {
                         setState(() {
-                          textEditingController.text = "${textEditingController.text}(";
+                          textEditingController.text =
+                              "${textEditingController.text}(";
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -173,15 +177,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       onPressed: () {
                         setState(() {
                           setState(() {
-                          textEditingController.text = "${textEditingController.text})";
+                            textEditingController.text =
+                                "${textEditingController.text})";
                           });
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -202,20 +205,20 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         setState(() {
                           exp = textEditingController.text;
                           try {
-                            Parser parser= Parser();
+                            Parser parser = Parser();
                             Expression expression = parser.parse(exp);
-                             ContextModel contextModel =ContextModel(); 
-                            textEditingController.text = expression.evaluate(EvaluationType.REAL, contextModel).toString() ;
+                            ContextModel contextModel = ContextModel();
+                            textEditingController.text = expression
+                                .evaluate(EvaluationType.REAL, contextModel)
+                                .toString();
                           } catch (e) {
                             debugPrint("Error : $e");
                           }
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -239,14 +242,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     child: TextButton(
                       onPressed: () {
                         setState(() {
-                          textEditingController.text = "${textEditingController.text}7";
+                          textEditingController.text =
+                              "${textEditingController.text}7";
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -265,14 +267,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     child: TextButton(
                       onPressed: () {
                         setState(() {
-                          textEditingController.text = "${textEditingController.text}8";
+                          textEditingController.text =
+                              "${textEditingController.text}8";
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -291,14 +292,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     child: TextButton(
                       onPressed: () {
                         setState(() {
-                          textEditingController.text = "${textEditingController.text}9";
+                          textEditingController.text =
+                              "${textEditingController.text}9";
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -317,14 +317,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     child: TextButton(
                       onPressed: () {
                         setState(() {
-                          textEditingController.text = "${textEditingController.text}+";
+                          textEditingController.text =
+                              "${textEditingController.text}+";
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -348,14 +347,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     child: TextButton(
                       onPressed: () {
                         setState(() {
-                          textEditingController.text = "${textEditingController.text}4";
+                          textEditingController.text =
+                              "${textEditingController.text}4";
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -374,14 +372,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     child: TextButton(
                       onPressed: () {
                         setState(() {
-                          textEditingController.text = "${textEditingController.text}5";
+                          textEditingController.text =
+                              "${textEditingController.text}5";
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -400,14 +397,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     child: TextButton(
                       onPressed: () {
                         setState(() {
-                          textEditingController.text = "${textEditingController.text}6";
+                          textEditingController.text =
+                              "${textEditingController.text}6";
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -426,14 +422,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     child: TextButton(
                       onPressed: () {
                         setState(() {
-                          textEditingController.text = "${textEditingController.text}-";
+                          textEditingController.text =
+                              "${textEditingController.text}-";
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -457,14 +452,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     child: TextButton(
                       onPressed: () {
                         setState(() {
-                          textEditingController.text = "${textEditingController.text}1";
+                          textEditingController.text =
+                              "${textEditingController.text}1";
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -483,14 +477,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     child: TextButton(
                       onPressed: () {
                         setState(() {
-                          textEditingController.text = "${textEditingController.text}2";
+                          textEditingController.text =
+                              "${textEditingController.text}2";
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -509,14 +502,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     child: TextButton(
                       onPressed: () {
                         setState(() {
-                          textEditingController.text = "${textEditingController.text}3";
+                          textEditingController.text =
+                              "${textEditingController.text}3";
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -535,14 +527,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     child: TextButton(
                       onPressed: () {
                         setState(() {
-                          textEditingController.text = "${textEditingController.text}*";
+                          textEditingController.text =
+                              "${textEditingController.text}*";
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -566,20 +557,22 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     child: TextButton(
                       onPressed: () {
                         setState(() {
-                          textEditingController.text = "${textEditingController.text}0";
+                          textEditingController.text =
+                              "${textEditingController.text}0";
                         });
                       },
-                      onLongPress: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => AuthendicationPage(title: 'Authendication Needed',))
-                          );
-                      },
+                      onLongPress:  togglePage2Content,
+                      //() {
+                      //   Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //           builder: (context) => AuthendicationPage(
+                      //                 title: 'Authendication Needed',
+                      //               )));
+                      // },
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -598,14 +591,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     child: TextButton(
                       onPressed: () {
                         setState(() {
-                          textEditingController.text = "${textEditingController.text}.";
+                          textEditingController.text =
+                              "${textEditingController.text}.";
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -624,14 +616,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     child: TextButton(
                       onPressed: () {
                         setState(() {
-                          textEditingController.text = "${textEditingController.text}%";
+                          textEditingController.text =
+                              "${textEditingController.text}%";
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -650,7 +641,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     child: TextButton(
                       onPressed: () {
                         setState(() {
-                          textEditingController.text = "${textEditingController.text}/";
+                          textEditingController.text =
+                              "${textEditingController.text}/";
                         });
                       },
                       style: ButtonStyle(

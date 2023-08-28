@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:math_expressions/math_expressions.dart';
 
+import 'calculator_page.dart';
 import 'vault_page.dart';
 
 class AuthendicationPage extends StatefulWidget {
@@ -18,6 +19,13 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
   double bmargin = 5;
   double bsize = 85;
   double bheight = 60;
+  bool showPage2Content = false;
+
+  void togglePage2Content() {
+    setState(() {
+      showPage2Content = !showPage2Content;
+    });
+  }
 
   Future<bool> authenticate(String inputPassword) async {
     const secureStorage = FlutterSecureStorage();
@@ -30,6 +38,9 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
   Widget build(BuildContext context) {
     // double screenWidth = MediaQuery.of(context).size.width;
     // double containerWidth = screenWidth * 0.8; // 80% of the screen width
+        if (showPage2Content) {
+      return const CalculatorPage(title: 'Calculator');
+    }
     double bsize = 85;
 
     final textFieldBorder = OutlineInputBorder(
@@ -574,14 +585,15 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                               "${textEditingController.text}0";
                         });
                       },
-                      onLongPress: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const AuthendicationPage(
-                                      title: 'Authendication Needed',
-                                    )));
-                      },
+                      onLongPress: togglePage2Content,
+                      // () {
+                      //   Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //           builder: (context) => const AuthendicationPage(
+                      //                 title: 'Authendication Needed',
+                      //               )));
+                      // },
                       style: ButtonStyle(
                         backgroundColor: const MaterialStatePropertyAll(Colors.white),
                         foregroundColor: const MaterialStatePropertyAll(Colors.black),

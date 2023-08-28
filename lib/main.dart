@@ -3,6 +3,8 @@ import 'package:flutter_calculator_vault/calculator_page.dart';
 import 'package:flutter_calculator_vault/set_password.dart';
 // import 'package:flutter_calculator_vault/tmp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+// import 'instruction_page.dart';
 // import 'package:math_expressions/math_expressions.dart';
 
 // void main() {
@@ -33,6 +35,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/first': (context) => const SetPassword(title: 'Set Password',),
         '/second': (context) => const CalculatorPage(title: 'Calculator',),
+        // '/second': (context) => const InstructionPage(title: 'InstructionPage',),
+
       }
     );
   }
