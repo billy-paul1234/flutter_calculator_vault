@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:math_expressions/math_expressions.dart';
-import 'package:flutter_calculator_vault/AuthendicationPage.dart';
+import 'package:flutter_calculator_vault/authendication_page.dart';
 
 class CalculatorPage extends StatefulWidget {
   const CalculatorPage({super.key, required this.title});

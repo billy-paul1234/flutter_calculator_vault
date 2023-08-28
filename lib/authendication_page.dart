@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:math_expressions/math_expressions.dart';
 
-import 'VaultPage.dart';
+import 'vault_page.dart';
 
 class AuthendicationPage extends StatefulWidget {
   const AuthendicationPage({super.key, required this.title});
@@ -20,8 +20,9 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
   double bheight = 60;
 
   Future<bool> authenticate(String inputPassword) async {
-    final secureStorage = FlutterSecureStorage();
-    final storedPassword = await secureStorage.read(key: 'password');
+    const secureStorage = FlutterSecureStorage();
+    var storedPassword = await secureStorage.read(key: 'password');
+    debugPrint(storedPassword);
     return storedPassword == inputPassword;
   }
 
@@ -53,7 +54,7 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                   child: Container(
                     margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
                     decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 146, 144, 143),
+                      color: const Color.fromARGB(255, 146, 144, 143),
                       borderRadius: BorderRadius.circular(5),
                     ),
                     padding: const EdgeInsets.all(8),
@@ -120,8 +121,8 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                   child: Container(
                     margin: EdgeInsets.all(bmargin),
                     child: TextButton.icon(
-                      icon: Icon(Icons.backspace_sharp),
-                      label: Text(""),
+                      icon: const Icon(Icons.backspace_sharp),
+                      label: const Text(""),
                       onPressed: () {
                         setState(() {
                           if (textEditingController.text.isNotEmpty) {
@@ -132,8 +133,8 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -153,8 +154,8 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -180,8 +181,8 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -200,17 +201,19 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                     child: TextButton(
                       onPressed: () async {
                         String inputPassword = textEditingController.text;
-                        bool isAuthenticated =
-                            await authenticate(inputPassword);
+                        bool isAuthenticated = await authenticate(inputPassword);
+                        debugPrint('isAuthenticated: $isAuthenticated as');
                         if (isAuthenticated) {
                           textEditingController.text = "";
                           exp = textEditingController.text;
+                          // ignore: use_build_context_synchronously
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => const VaultPage(
                                         title: 'Vault Opend',
                                       )));
+                          return;
                         }
                         setState(() {
                           exp = textEditingController.text;
@@ -227,8 +230,8 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -257,8 +260,8 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -282,8 +285,8 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -307,8 +310,8 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -332,8 +335,8 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -362,8 +365,8 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -387,8 +390,8 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -412,8 +415,8 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -437,8 +440,8 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -467,8 +470,8 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -492,8 +495,8 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -517,8 +520,8 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -542,8 +545,8 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -575,13 +578,13 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => AuthendicationPage(
+                                builder: (context) => const AuthendicationPage(
                                       title: 'Authendication Needed',
                                     )));
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -605,8 +608,8 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -630,8 +633,8 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor: const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor: const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:

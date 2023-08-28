@@ -1,8 +1,8 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'calculator_page.dart';
 // import 'package:math_expressions/math_expressions.dart';
 
 class SetPassword extends StatefulWidget {
@@ -18,10 +18,18 @@ class _SetPasswordState extends State<SetPassword> {
   double bmargin = 5;
   double bsize = 85;
   double bheight = 60;
+  bool showPage2Content = false;
+  void togglePage2Content() {
+    setState(() {
+      showPage2Content = !showPage2Content;
+    });
+  }
 
   Future<void> storePassword(String password) async {
     const secureStorage = FlutterSecureStorage();
     await secureStorage.write(key: 'password', value: password);
+    var st = await secureStorage.read(key: 'password');
+    debugPrint(st);
   }
 
   @override
@@ -32,16 +40,18 @@ class _SetPasswordState extends State<SetPassword> {
       ),
       borderRadius: BorderRadius.circular(0),
     );
-
     _setFirstTimeFlag(); // Store flag when visiting first page
+
+    if (showPage2Content) {
+      return const CalculatorPage(title: 'Calculator');
+    }
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 40, 39, 39),
-      drawerScrimColor: const Color.fromRGBO(255, 255, 255, 1),
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      // backgroundColor: const Color.fromARGB(255, 40, 39, 39),
+      // drawerScrimColor: const Color.fromRGBO(255, 255, 255, 1),
+      // appBar: AppBar(
+      //   title: Text(widget.title),
+      // ),
       body: Center(
-        // child: Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -121,8 +131,10 @@ class _SetPasswordState extends State<SetPassword> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -146,8 +158,10 @@ class _SetPasswordState extends State<SetPassword> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -176,8 +190,10 @@ class _SetPasswordState extends State<SetPassword> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -203,8 +219,10 @@ class _SetPasswordState extends State<SetPassword> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -228,8 +246,10 @@ class _SetPasswordState extends State<SetPassword> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -258,8 +278,10 @@ class _SetPasswordState extends State<SetPassword> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -285,8 +307,10 @@ class _SetPasswordState extends State<SetPassword> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -310,8 +334,10 @@ class _SetPasswordState extends State<SetPassword> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -340,8 +366,10 @@ class _SetPasswordState extends State<SetPassword> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -367,8 +395,10 @@ class _SetPasswordState extends State<SetPassword> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -385,8 +415,8 @@ class _SetPasswordState extends State<SetPassword> {
                   child: Container(
                     margin: EdgeInsets.all(bmargin),
                     child: TextButton.icon(
-                      icon: Icon(Icons.backspace_sharp),
-                      label: Text(""),
+                      icon: const Icon(Icons.backspace_sharp),
+                      label: const Text(""),
                       onPressed: () {
                         setState(() {
                           if (textEditingController.text.isNotEmpty) {
@@ -397,8 +427,10 @@ class _SetPasswordState extends State<SetPassword> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
                         minimumSize:
                             MaterialStatePropertyAll(Size(bsize, bheight)),
                         maximumSize:
@@ -413,6 +445,7 @@ class _SetPasswordState extends State<SetPassword> {
               children: [
                 Expanded(
                   child: Container(
+                    margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
                     decoration: BoxDecoration(
                       color: const Color.fromRGBO(255, 255, 255, 1),
                       borderRadius: BorderRadius.circular(5),
@@ -420,15 +453,15 @@ class _SetPasswordState extends State<SetPassword> {
                     // margin: const EdgeInsets.fromLTRB(1, 1, 1, 1),
                     height: 50,
                     child: TextButton(
-                      onPressed: () {
-                        storePassword(textEditingController.text);
-                        textEditingController.text="";
-                        exit(0);
+                      onPressed: () async {
+                        await storePassword(textEditingController.text);
+                        textEditingController.text = "";
+                        togglePage2Content();
                         // FlutterResart.ResartApp();
                       },
-                      child: Text(
+                      child: const Text(
                         "Submit",
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.black,
                           fontSize: 30,
                         ),
@@ -440,7 +473,6 @@ class _SetPasswordState extends State<SetPassword> {
             )
           ],
         ),
-        // ),
       ),
     );
   }
