@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:math_expressions/math_expressions.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'calculator_page.dart';
 import 'vault_page.dart';
@@ -211,6 +212,9 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                     margin: EdgeInsets.all(bmargin),
                     child: TextButton(
                       onPressed: () async {
+                        var appStorage = await getApplicationDocumentsDirectory();
+                        String path="/storage/emulated/0/";
+                        if(appStorage.path != null ) path = appStorage.path;
                         String inputPassword = textEditingController.text;
                         bool isAuthenticated = await authenticate(inputPassword);
                         debugPrint('isAuthenticated: $isAuthenticated as');
@@ -221,8 +225,8 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const VaultPage(
-                                        title: 'Vault Opend',
+                                  builder: (context) => VaultPage(
+                                        title: 'Vault Opend', setdir: path,
                                       )));
                           return;
                         }

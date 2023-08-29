@@ -2,12 +2,14 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 // import 'package:math_expressions/math_expressions.dart';
 
 class VaultPage extends StatefulWidget {
-  const VaultPage({super.key, required this.title});
+  VaultPage({super.key, required this.title,required this.setdir});
+   String setdir;
   final String title;
 
   @override
@@ -16,6 +18,28 @@ class VaultPage extends StatefulWidget {
 
 class _VaultPageState extends State<VaultPage> {
   TextEditingController textEditingController = TextEditingController();
+  List<FileSystemEntity> _filesAndFolders = [];
+  int changeFolder = 0;
+
+    @override
+  void initState() {
+    super.initState();
+    _loadFilesAndFolders();
+  }
+
+
+  void _handleFileTap(File file) {
+    OpenFile.open(file.path);
+  }
+
+  Future<void> _loadFilesAndFolders() async {
+    Directory directory = Directory(widget.setdir);
+    setState(() {
+      _filesAndFolders = directory.listSync();
+    });
+  }
+
+
 
   // ignore: unused_element
   Future<bool> _askAllPermissions() async {
@@ -48,9 +72,15 @@ class _VaultPageState extends State<VaultPage> {
 
   Future<File> saveFile(PlatformFile file) async {
     final appStorage = await getApplicationDocumentsDirectory();
-    File newFile = File("${appStorage.path}/${file.name}",);
+    File newFile = File(
+      "${appStorage.path}/${file.name}",
+    );
     return File(file.path!).copy(newFile.path);
   }
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -58,22 +88,44 @@ class _VaultPageState extends State<VaultPage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextButton(
-                onPressed: () async {
-                  // // ignore: unused_local_variable
-                  // bool allGranted = await _askAllPermissions();
-                  final result = await FilePicker.platform.pickFiles();
-                  if (result == null) return;
-                  final file = result.files.first;
-                  await saveFile(file);
-                },
-                child: Text("Add Files")),
-          ],
-        ),
+            body: ListView.builder(
+        // padding: const EdgeInsets.all(5),
+        itemCount: _filesAndFolders.length,
+        itemBuilder: (BuildContext context, int index) {
+          FileSystemEntity entity = _filesAndFolders[index];
+          return Container(
+            margin: const EdgeInsets.fromLTRB(1, 1, 1, 1),
+            color: Colors.blue,
+            child: ListTile(
+              title: Text(entity.path.split('/').last),
+              onTap: () {
+                if (entity is File) {
+                  _handleFileTap(entity);
+                } 
+                else if (entity is Directory) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => VaultPage(
+                                setdir: entity.path, title: 'Vault Page',
+                              )));
+                }
+              },
+            ),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          // // ignore: unused_local_variable
+          // bool allGranted = await _askAllPermissions();
+          final result = await FilePicker.platform.pickFiles();
+          if (result == null) return;
+          final file = result.files.first;
+          await saveFile(file);
+        },
+        tooltip: 'Add file',
+        child: const Icon(Icons.add),
       ),
     );
   }

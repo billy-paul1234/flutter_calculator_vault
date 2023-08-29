@@ -94,6 +94,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.2"
+  flutter_list_view:
+    dependency: "direct main"
+    description:
+      name: flutter_list_view
+      sha256: b044af8f1443494b4404cc2f33d8c92003b239301bebeecbea037084013e5a26
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.21"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
