@@ -38,6 +38,8 @@ dependencies:
   math_expressions: ^2.1.0
   shared_preferences: ^2.0.8 
   flutter_secure_storage: ^5.1.0
+  permission_handler: ^10.4.3
+
 
 dev_dependencies:
   flutter_test:
