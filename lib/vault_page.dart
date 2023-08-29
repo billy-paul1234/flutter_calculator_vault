@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 // import 'package:math_expressions/math_expressions.dart';
 
@@ -13,59 +17,40 @@ class VaultPage extends StatefulWidget {
 class _VaultPageState extends State<VaultPage> {
   TextEditingController textEditingController = TextEditingController();
 
-  // Future<void> _requestPermissions() async {
-  //   List<Permission> permissions = [
-  //     Permission.storage,
-  //     Permission.camera,
-  //     Permission.photos,
-  //     Permission.videos,
-  //     Permission.contacts,
-  //     Permission.accessMediaLocation,
-  //     Permission.calendar,
-  //     Permission.microphone,
-  //     Permission.sms,
-  //     Permission.audio,
-  //     Permission.mediaLibrary,
-  //     // Add more permissions here as needed
-  //   ];
-
-  //   Map<Permission, PermissionStatus> statuses = await permissions.request();
-
-  //   // Check the permission statuses and handle accordingly
-  //   if (statuses[Permission.storage]!.isGranted &&
-  //       statuses[Permission.camera]!.isGranted) {
-  //     // All permissions granted, proceed with your app logic.
-  //   } else {
-  //     // Handle permission denial if needed.
-  //   }
-  // }
-
-
-  Future<void> _askAllPermissions() async {
+  // ignore: unused_element
+  Future<bool> _askAllPermissions() async {
+    // ignore: unused_local_variable
+    bool allGranted;
     List<Permission> permissions = [
       Permission.storage,
       Permission.camera,
+      Permission.photos,
+      Permission.videos,
+      Permission.contacts,
+      Permission.accessMediaLocation,
       // Add more permissions here as needed
     ];
 
     Map<Permission, PermissionStatus> statuses = await permissions.request();
 
-    bool allGranted = statuses.values.every((status) => status.isGranted);
-
+    allGranted = statuses.values.every((status) => status.isGranted);
     if (allGranted) {
       // All permissions granted, you can proceed with your app logic.
+      return allGranted;
     } else {
       // Handle permission denial if needed.
+      // ignore: unused_local_variable
+      // var tmp = _askAllPermissions();
     }
+    // _requestPermissions();
+    return allGranted;
   }
-  
-//   @override
-//   Widget build(BuildContext context) {
-//     // TODO: implement build
-//     throw UnimplementedError();
-//   }
-// }
 
+  Future<File> saveFile(PlatformFile file) async {
+    final appStorage = await getApplicationDocumentsDirectory();
+    File newFile = File("${appStorage.path}/${file.name}",);
+    return File(file.path!).copy(newFile.path);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,9 +63,13 @@ class _VaultPageState extends State<VaultPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextButton(
-                onPressed: () {
-                  _askAllPermissions();
-                  // _requestPermissions();
+                onPressed: () async {
+                  // // ignore: unused_local_variable
+                  // bool allGranted = await _askAllPermissions();
+                  final result = await FilePicker.platform.pickFiles();
+                  if (result == null) return;
+                  final file = result.files.first;
+                  await saveFile(file);
                 },
                 child: Text("Add Files")),
           ],
