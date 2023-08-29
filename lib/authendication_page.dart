@@ -691,10 +691,6 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
           ],
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _incrementCounter,
-      //   child: const Icon(Icons.add),
-      // ), //s trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

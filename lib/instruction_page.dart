@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-
-import 'calculator_page.dart';
+import 'package:flutter_calculator_vault/calculator_page.dart';
+import 'package:flutter_calculator_vault/set_password.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+// import 'calculator_page.dart';
 // import 'package:math_expressions/math_expressions.dart';
 
 class InstructionPage extends StatefulWidget {
@@ -13,10 +16,10 @@ class InstructionPage extends StatefulWidget {
 
 class _InstructionPageState extends State<InstructionPage> {
   TextEditingController textEditingController = TextEditingController();
-  String _imagepath = "assets/calculator.png";
+  String _imagepath = "assets/setpassword.jpg";
   int buttonnum = 1;
-  String imagetxt = "Long Press on Zero";
-  int totalimages = 2;
+  String imagetxt = "Set Your Password";
+  int totalimages = 4;
   var allignbutton = MainAxisAlignment.end;
   bool showPage2Content = false;
 
@@ -29,9 +32,24 @@ class _InstructionPageState extends State<InstructionPage> {
   void backimage() {
     setState(() {
       buttonnum--;
-      imagetxt = "Long Press on Zero";
-      _imagepath = "assets/calculator.png";
       if (buttonnum == 1) allignbutton = MainAxisAlignment.end;
+      if (buttonnum == 1) {
+        imagetxt = "Set Your Password";
+        _imagepath = "assets/setpassword.jpg";
+      }
+
+      if (buttonnum == 2) {
+        imagetxt = "To open your Vault Long Press on 0";
+        _imagepath = "assets/calculator.jpg";
+      }
+      if (buttonnum == 3) {
+        imagetxt = "Enter Your Password";
+        _imagepath = "assets/authendication.jpg";
+      }
+      if (buttonnum == 4) {
+        imagetxt = "Now Your Vault is Opend";
+        _imagepath = "assets/vault.jpg";
+      }
     });
   }
 
@@ -39,16 +57,35 @@ class _InstructionPageState extends State<InstructionPage> {
     setState(() {
       if (buttonnum < totalimages) buttonnum++;
       allignbutton = MainAxisAlignment.spaceBetween;
-      imagetxt = "Enter Your Password and Press =";
-      if (buttonnum == 2) _imagepath = "assets/authendication.png";
+      if (buttonnum == 2) {
+        imagetxt = "To open your Vault Long Press on 0";
+        _imagepath = "assets/calculator.jpg";
+      }
+      if (buttonnum == 3) {
+        imagetxt = "Enter Your Password";
+        _imagepath = "assets/authendication.jpg";
+      }
+      if (buttonnum == 4) {
+        imagetxt = "Now Your Vault is Opend";
+        _imagepath = "assets/vault.jpg";
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    bool isFirstTime;
     if (showPage2Content) {
-      return const CalculatorPage(title: 'Calculator');
+      return const SetPassword(title: 'Set Password');
     }
+    // ignore: no_leading_underscores_for_local_identifiers
+    Future<void> _setFirstTimeFlag() async {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('first_time', false);
+    }
+
+    _setFirstTimeFlag(); // Store flag when visiting first page
+
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 3, 2, 2),
@@ -64,14 +101,23 @@ class _InstructionPageState extends State<InstructionPage> {
               height: 500,
               width: 500,
             ),
-            Container(
-              margin: const EdgeInsets.fromLTRB(0, 8, 0, 0),
-              height: 50,
-              child: Text(
-                imagetxt,
-                style: const TextStyle(
-                    fontSize: 20, color: Color.fromARGB(255, 251, 249, 249)),
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                    height: 50,
+                    child: Center(
+                      child: Text(
+                        imagetxt,
+                        style: const TextStyle(
+                            fontSize: 20,
+                            color: Color.fromARGB(255, 251, 249, 249)),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -155,7 +201,16 @@ class _InstructionPageState extends State<InstructionPage> {
                           foregroundColor: MaterialStatePropertyAll(
                               Color.fromARGB(255, 11, 10, 10)),
                         ),
-                        onPressed: togglePage2Content,
+                        onPressed: 
+                        // () {
+                        //   Navigator.push(
+                        //       context,
+                        //       MaterialPageRoute(
+                        //           builder: (context) => const SetPassword(
+                        //                 title: 'Set Password',
+                        //               )));
+                        // },
+                        togglePage2Content,
                         child: const Text(
                           "Done",
                           style: TextStyle(fontSize: 20),

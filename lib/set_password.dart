@@ -2,8 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'calculator_page.dart';
-import 'instruction_page.dart';
+import 'calculator_page.dart';
+// import 'instruction_page.dart';
+// import 'instruction_page.dart';
 // import 'package:math_expressions/math_expressions.dart';
 
 class SetPassword extends StatefulWidget {
@@ -19,12 +20,16 @@ class _SetPasswordState extends State<SetPassword> {
   double bmargin = 5;
   double bsize = 85;
   double bheight = 60;
-  bool showPage2Content = false;
-  void togglePage2Content() {
-    setState(() {
-      showPage2Content = !showPage2Content;
-    });
-  }
+  bool showPage2Content = true;
+  // ignore: prefer_typing_uninitialized_variables
+  var setpasswordpage;
+  var calculatorpage= const CalculatorPage(title: "Calculator");
+
+  // void togglePage2Content() {
+  //   setState(() {
+  //     showPage2Content = !showPage2Content;
+  //   });
+  // }
 
   Future<void> storePassword(String password) async {
     const secureStorage = FlutterSecureStorage();
@@ -35,18 +40,20 @@ class _SetPasswordState extends State<SetPassword> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: no_leading_underscores_for_local_identifiers
+    Future<void> _setFirstTimeFlag() async {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('first_time_setPass', false);
+    }
+
     final textFieldBorder = OutlineInputBorder(
       borderSide: const BorderSide(
         style: BorderStyle.solid,
       ),
       borderRadius: BorderRadius.circular(0),
     );
-    _setFirstTimeFlag(); // Store flag when visiting first page
-
-    if (showPage2Content) {
-      return const InstructionPage(title: 'Calculator');
-    }
-    return Scaffold(
+    // ignore: dead_code
+    setpasswordpage = Scaffold(
       backgroundColor: const Color.fromARGB(255, 40, 39, 39),
       drawerScrimColor: const Color.fromRGBO(255, 255, 255, 1),
       appBar: AppBar(
@@ -457,8 +464,13 @@ class _SetPasswordState extends State<SetPassword> {
                       onPressed: () async {
                         await storePassword(textEditingController.text);
                         textEditingController.text = "";
-                        togglePage2Content();
-                        // FlutterResart.ResartApp();
+                        await _setFirstTimeFlag();
+                        // Navigator.pushReplacementNamed(context, '/second');
+                        // ignore: use_build_context_synchronously
+                        // Navigator.push(context, MaterialPageRoute(builder: (context) => const CalculatorPage(title: 'Calculator pas',)));
+                         // Store flag when visiting first page
+                        setState(() {
+                        showPage2Content = !showPage2Content;                  });
                       },
                       child: const Text(
                         "Submit",
@@ -476,10 +488,8 @@ class _SetPasswordState extends State<SetPassword> {
         ),
       ),
     );
-  }
+    if( showPage2Content ) return setpasswordpage;
+    return calculatorpage;
 
-  Future<void> _setFirstTimeFlag() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('first_time', false);
   }
 }
