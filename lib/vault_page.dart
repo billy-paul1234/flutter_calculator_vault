@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_calculator_vault/calculator_page.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 // import 'package:file_selector/file_selector.dart';
@@ -26,6 +27,7 @@ class _VaultPageState extends State<VaultPage> {
   List<FileSystemEntity> _filesAndFolders = [];
   int changeFolder = 0;
   bool refreshVaultPage = false;
+  bool goToCalculator = false;
   var appStorage;
   // String inputFileFolder = "";
 
@@ -55,11 +57,14 @@ class _VaultPageState extends State<VaultPage> {
   }
 
   void _refreshVaultPage() {
-    setState(() async {
-      debugPrint(
-          'No files selected!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!.');
-      // appStorage = await getApplicationDocumentsDirectory();
+    setState(() {
       refreshVaultPage = true;
+    });
+  }
+
+  void _goToCalculator() {
+    setState(() {
+      goToCalculator = true;
     });
   }
 
@@ -87,40 +92,66 @@ class _VaultPageState extends State<VaultPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(txt),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextField(
-                controller: textEditingController2,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 30,
+          content: Container(
+            width: 400,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: textEditingController2,
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 255, 254, 254),
+                    fontSize: 25,
+                  ),
+                  decoration: const InputDecoration(hintText: "Name"),
                 ),
-                decoration: const InputDecoration(hintText: "Name"),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  TextButton(
-                      style: const ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(
-                            Color.fromARGB(255, 244, 240, 240)),
-                        foregroundColor: MaterialStatePropertyAll(
-                            Color.fromARGB(255, 11, 10, 10)),
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          var inputFileFolder = textEditingController2.text;
-                          if (txt == "Create Folder")
-                            createFolder(inputFileFolder);
-                          Navigator.pop(context);
-                        });
-                      },
-                      child: const Text("Create")),
-                ],
-              ) // Add more options as needed
-            ],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(top:15),
+                      child: TextButton(
+                          style: const ButtonStyle(
+                            minimumSize: MaterialStatePropertyAll(Size(100,45)),
+                            backgroundColor: MaterialStatePropertyAll(
+                                Color.fromARGB(255, 244, 240, 240)),
+                            foregroundColor: MaterialStatePropertyAll(
+                                Color.fromARGB(255, 11, 10, 10)),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              Navigator.pop(context);
+                            });
+                          },
+                          child: const Text("Cancel")
+                          ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top:15),
+                      child: TextButton(
+                          style: const ButtonStyle(
+                            minimumSize: MaterialStatePropertyAll(Size(100,45)),
+                            backgroundColor: MaterialStatePropertyAll(
+                                Color.fromARGB(255, 244, 240, 240)),
+                            foregroundColor: MaterialStatePropertyAll(
+                                Color.fromARGB(255, 11, 10, 10)),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              var inputFileFolder = textEditingController2.text;
+                              if (txt == "Create Folder")
+                                createFolder(inputFileFolder);
+                              Navigator.pop(context);
+                            });
+                          },
+                          child: const Text("Create")
+                          ),
+                    ),
+                  ],
+                ) // Add more options as needed
+              ],
+            ),
           ),
         );
       },
@@ -129,20 +160,29 @@ class _VaultPageState extends State<VaultPage> {
 
   Future<void> _handleMenuItemClick(String value) async {
     // Handle the clicked menu item
-    print('Clicked: $value');
+    // print('Clicked: $value');
     if (value == 'createFolder') {
       // createFolder();
       _popUpInput(context, "Create Folder");
+    }
+    if (value == 'goToCalculator') {
+      _goToCalculator();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     String currentPath = widget.setdir;
+
     if (refreshVaultPage) {
       return VaultPage(
         title: 'Vault Page',
         setdir: widget.setdir,
+      );
+    }
+    if (goToCalculator) {
+      return const CalculatorPage(
+        title: 'Calculator Page',
       );
     }
 
@@ -161,6 +201,10 @@ class _VaultPageState extends State<VaultPage> {
                 const PopupMenuItem<String>(
                   value: 'option2',
                   child: Text('Create File'),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'goToCalculator',
+                  child: Text('Calculator'),
                 ),
                 const PopupMenuDivider(),
                 const PopupMenuItem<String>(
@@ -187,7 +231,11 @@ class _VaultPageState extends State<VaultPage> {
             color: const Color.fromARGB(255, 90, 91, 92),
             child: ListTile(
               // title: Text(entity.path.split('/').last),
-              leading: Icon(entity is File ? Icons.file_present : Icons.folder),
+              leading: Icon(entity is File ? Icons.file_open : Icons.folder),
+              iconColor: (entity is File
+                  ? const Color.fromARGB(255, 208, 190, 120)
+                  : Colors.yellow),
+              subtitle: Text(fileSize((entity is File ? entity.path : ""))),
               title: Text(entity.path.split('/').last),
               onTap: () {
                 if (entity is File) {
@@ -207,36 +255,52 @@ class _VaultPageState extends State<VaultPage> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final result =
-              await FilePicker.platform.pickFiles(allowMultiple: true);
-          if (result == null) {
-            debugPrint('No files selected.');
-            return;
-          }
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            margin: EdgeInsets.fromLTRB(0, 0, 0, 5),
+            child: FloatingActionButton(
+              onPressed: _goToCalculator,
+              tooltip: 'Calculator',
+              child: const Icon(Icons.calculate),
+            ),
+          ),
+          FloatingActionButton(
+            onPressed: () async {
+              final result =
+                  await FilePicker.platform.pickFiles(allowMultiple: true);
+              if (result == null) {
+                debugPrint('No files selected.');
+                return;
+              }
 
-          for (var file in result.files) {
-            File newFile = File(
-              "${widget.setdir}/${file.name}",
-            );
-            File(file.path!).copy(newFile.path);
-          }
-          setState(() {
-            refreshVaultPage = true;
-          });
-          // _refreshVaultPage();
-          // final file = result.files.first;
-          // // ignore: unused_local_variable
-          // // File tmp = await
-          // saveFile(file);
-          // setState(() {
-          // _refreshVaultPage();
-          // });
-        },
-        tooltip: 'Add file',
-        child: const Icon(Icons.add),
+              for (var file in result.files) {
+                File newFile = File(
+                  "${widget.setdir}/${file.name}",
+                );
+                File(file.path!).copy(newFile.path);
+              }
+              _refreshVaultPage();
+            },
+            tooltip: 'Add file',
+            child: const Icon(Icons.add),
+          ),
+        ],
       ),
     );
   }
+}
+
+String fileSize(String path) {
+  if (path == "") return "";
+
+  var file = File(path);
+  var size = file.lengthSync();
+  String s = size >= 1000000000
+      ? '${(size / 1000000000).toStringAsFixed(2)} GB'
+      : (size >= 1000000
+          ? '${(size / 1000000).toStringAsFixed(2)} MB'
+          : (size >= 1000 ? '${(size / 1000).toStringAsFixed(2)} KB' : "0 b"));
+  return s;
 }
