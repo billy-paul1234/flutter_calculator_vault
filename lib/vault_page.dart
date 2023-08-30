@@ -23,6 +23,7 @@ class _VaultPageState extends State<VaultPage> {
   int changeFolder = 0;
   bool refreshVaultPage = false;
   var appStorage;
+  String inputFileFolder = "";
 
   @override
   void initState() {
@@ -41,35 +42,6 @@ class _VaultPageState extends State<VaultPage> {
     });
   }
 
-  // ignore: unused_element
-  // Future<bool> _askAllPermissions() async {
-  //   // ignore: unused_local_variable
-  //   bool allGranted;
-  //   List<Permission> permissions = [
-  //     Permission.storage,
-  //     Permission.camera,
-  //     Permission.photos,
-  //     Permission.videos,
-  //     Permission.contacts,
-  //     Permission.accessMediaLocation,
-  //     // Add more permissions here as needed
-  //   ];
-
-  //   Map<Permission, PermissionStatus> statuses = await permissions.request();
-
-  //   allGranted = statuses.values.every((status) => status.isGranted);
-  //   if (allGranted) {
-  //     // All permissions granted, you can proceed with your app logic.
-  //     return allGranted;
-  //   } else {
-  //     // Handle permission denial if needed.
-  //     // ignore: unused_local_variable
-  //     // var tmp = _askAllPermissions();
-  //   }
-  //   // _requestPermissions();
-  //   return allGranted;
-  // }
-
   Future<File> saveFile(PlatformFile file) async {
     appStorage = await getApplicationDocumentsDirectory();
     File newFile = File(
@@ -85,6 +57,61 @@ class _VaultPageState extends State<VaultPage> {
     });
   }
 
+  Future<void> createFolder() async {
+    appStorage = await getApplicationDocumentsDirectory();
+    final Directory newDirectory = Directory("${appStorage.path}/$inputFileFolder");
+    // ignore: use_build_context_synchronously
+    _popUpInput(context);
+    if (!newDirectory.existsSync()) {
+      newDirectory.createSync(recursive: true);
+      debugPrint('Folder created: $inputFileFolder');
+    } else {
+      debugPrint('Folder already exists: $inputFileFolder');
+    }
+  }
+
+  void _popUpInput(BuildContext context) {
+    TextEditingController textEditingController2 = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('More Options'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: textEditingController2,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 30,
+                ),
+                decoration: InputDecoration(hintText: "Name"),
+              ),
+              TextButton(
+                  onPressed: () {
+                    setState(() {
+                      inputFileFolder = textEditingController2.text;
+                      Navigator.pop(context); 
+                    });
+                  },
+                  child: const Text("Create")) // Add more options as needed
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _handleMenuItemClick(String value) async {
+    // Handle the clicked menu item
+    print('Clicked: $value');
+    if (value == 'createFolder') {
+      createFolder();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (refreshVaultPage) {
@@ -97,6 +124,33 @@ class _VaultPageState extends State<VaultPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: _handleMenuItemClick,
+            itemBuilder: (BuildContext context) {
+              return [
+                const PopupMenuItem<String>(
+                  value: 'createFolder',
+                  child: Text('Create Folder'),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'option2',
+                  child: Text('Create File'),
+                ),
+                const PopupMenuDivider(),
+                const PopupMenuItem<String>(
+                  value: 'moreOptions',
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: Icon(Icons.more_horiz),
+                    title: Text('More Options'),
+                    trailing: Icon(Icons.keyboard_arrow_right),
+                  ),
+                ),
+              ];
+            },
+          ),
+        ],
       ),
       body: ListView.builder(
         // padding: const EdgeInsets.all(5),
