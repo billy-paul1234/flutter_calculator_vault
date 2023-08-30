@@ -43,40 +43,43 @@ class _VaultPageState extends State<VaultPage> {
   }
 
   Future<File> saveFile(PlatformFile file) async {
-    appStorage = await getApplicationDocumentsDirectory();
+    // appStorage = await getApplicationDocumentsDirectory();
     File newFile = File(
-      "${appStorage.path}/${file.name}",
+      "${widget.setdir}/${file.name}",
     );
     return File(file.path!).copy(newFile.path);
   }
 
   void _refreshVaultPage() {
     setState(() async {
-      appStorage = await getApplicationDocumentsDirectory();
+      // appStorage = await getApplicationDocumentsDirectory();
       refreshVaultPage = !refreshVaultPage;
     });
   }
 
   Future<void> createFolder() async {
-    appStorage = await getApplicationDocumentsDirectory();
-    final Directory newDirectory = Directory("${appStorage.path}/$inputFileFolder");
+    _popUpInput(context,"Create Folder");
+    // appStorage = await getApplicationDocumentsDirectory();
+    final Directory newDirectory = Directory("${widget.setdir}/$inputFileFolder");
     // ignore: use_build_context_synchronously
-    _popUpInput(context);
     if (!newDirectory.existsSync()) {
       newDirectory.createSync(recursive: true);
       debugPrint('Folder created: $inputFileFolder');
+      setState(() {
+      _refreshVaultPage();
+      });
     } else {
       debugPrint('Folder already exists: $inputFileFolder');
     }
   }
 
-  void _popUpInput(BuildContext context) {
+  void _popUpInput(BuildContext context, String txt) {
     TextEditingController textEditingController2 = TextEditingController();
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('More Options'),
+          title: Text(txt),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,7 +90,7 @@ class _VaultPageState extends State<VaultPage> {
                   color: Colors.black,
                   fontSize: 30,
                 ),
-                decoration: InputDecoration(hintText: "Name"),
+                decoration: const InputDecoration(hintText: "Name"),
               ),
               TextButton(
                   onPressed: () {
@@ -117,7 +120,7 @@ class _VaultPageState extends State<VaultPage> {
     if (refreshVaultPage) {
       return VaultPage(
         title: 'Vault Page',
-        setdir: appStorage.path,
+        setdir: widget.setdir,
       );
     }
 
