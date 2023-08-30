@@ -54,6 +54,7 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
 
     if (showVaultPage) {
       return VaultPage(title: 'Vault Page', setdir: appStorage.path);
+      // return VaultPage(title: 'Vault Page', setdir: '/storage/emulated/0');
     }
 
     double bsize = 85;
