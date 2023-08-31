@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:math_expressions/math_expressions.dart';
 import 'package:path_provider/path_provider.dart';
-
 import 'calculator_page.dart';
 import 'vault_page.dart';
 
@@ -53,7 +52,7 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
     if (showcalculatorPage) return const CalculatorPage(title: 'Calculator');
 
     if (showVaultPage) {
-      return VaultPage(title: 'Vault Page', setdir: appStorage.path);
+      return VaultPage(title: 'Vault Page', setdir: "${appStorage.path}/MySecretFolder");
       // return VaultPage(title: 'Vault Page', setdir: '/storage/emulated/0');
     }
 

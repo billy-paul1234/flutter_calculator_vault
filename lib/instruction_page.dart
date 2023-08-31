@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_calculator_vault/set_password.dart';
+import 'package:flutter_calculator_vault/vault_page.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class InstructionPage extends StatefulWidget {
@@ -25,6 +29,7 @@ class _InstructionPageState extends State<InstructionPage> {
     "Enter Your Password",
     "Now Your Vault is Opend",
   ];
+  bool createSecretFolder = false;
 
   @override
   void initState() {
@@ -69,9 +74,30 @@ class _InstructionPageState extends State<InstructionPage> {
     super.dispose();
   }
 
+
+  Future<void> _createSecretFolder() async {
+    // var tmp = await _popUpInput(context, "Create Folder");
+    var appStorage = await getApplicationDocumentsDirectory();
+    final Directory newDirectory =
+        Directory("${appStorage.path}/MySecretFolder");
+
+    debugPrint("Folder creat check: ${appStorage.path}/MySecretFolder");
+    // ignore: use_build_context_synchronousl
+    if (newDirectory.existsSync()) {
+      createSecretFolder=true;
+      debugPrint('Directory already exists.');
+    } else {
+      newDirectory.createSync();
+      createSecretFolder=true;
+      debugPrint('Directory created successfully.');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    bool isFirstTime;
+    if(!createSecretFolder)_createSecretFolder();
+  
+    // bool isFirstTime;
     if (showPage2Content) {
       return const SetPassword(title: 'Set Password');
     }
