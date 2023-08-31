@@ -1,27 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calculator_vault/calculator_page.dart';
 import 'package:flutter_calculator_vault/set_password.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'calculator_page.dart';
-// import 'package:math_expressions/math_expressions.dart';
 
 class InstructionPage extends StatefulWidget {
   const InstructionPage({super.key, required this.title});
   final String title;
-
   @override
-  State<InstructionPage> createState() => _InstructionPageState();
+  _InstructionPageState createState() => _InstructionPageState();
 }
 
 class _InstructionPageState extends State<InstructionPage> {
-  TextEditingController textEditingController = TextEditingController();
-  String _imagepath = "assets/setpassword.jpg";
-  int buttonnum = 1;
-  String imagetxt = "Set Your Password";
-  int totalimages = 4;
-  var allignbutton = MainAxisAlignment.end;
+  final List<String> images = [
+    "assets/setpassword.jpg", // Replace with your image asset paths
+    "assets/calculator.jpg",
+    "assets/authendication.jpg",
+    "assets/vault.jpg",
+  ];
+  int _currentImage = 0;
+  PageController _pageController = PageController(initialPage: 0);
   bool showPage2Content = false;
+    final List<String> imagetxt = [
+    "Set Your Password",
+    "To open your Vault Long Press on 0",
+    "Enter Your Password",
+    "Now Your Vault is Opend",
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController.addListener(_pageListener);
+  }
 
   void togglePage2Content() {
     setState(() {
@@ -29,47 +38,35 @@ class _InstructionPageState extends State<InstructionPage> {
     });
   }
 
-  void backimage() {
+  void _pageListener() {
     setState(() {
-      buttonnum--;
-      if (buttonnum == 1) allignbutton = MainAxisAlignment.end;
-      if (buttonnum == 1) {
-        imagetxt = "Set Your Password";
-        _imagepath = "assets/setpassword.jpg";
-      }
-
-      if (buttonnum == 2) {
-        imagetxt = "To open your Vault Long Press on 0";
-        _imagepath = "assets/calculator.jpg";
-      }
-      if (buttonnum == 3) {
-        imagetxt = "Enter Your Password";
-        _imagepath = "assets/authendication.jpg";
-      }
-      if (buttonnum == 4) {
-        imagetxt = "Now Your Vault is Opend";
-        _imagepath = "assets/vault.jpg";
-      }
+      _currentImage = _pageController.page?.round() ?? 0;
     });
   }
 
-  void nextimage() {
-    setState(() {
-      if (buttonnum < totalimages) buttonnum++;
-      allignbutton = MainAxisAlignment.spaceBetween;
-      if (buttonnum == 2) {
-        imagetxt = "To open your Vault Long Press on 0";
-        _imagepath = "assets/calculator.jpg";
-      }
-      if (buttonnum == 3) {
-        imagetxt = "Enter Your Password";
-        _imagepath = "assets/authendication.jpg";
-      }
-      if (buttonnum == 4) {
-        imagetxt = "Now Your Vault is Opend";
-        _imagepath = "assets/vault.jpg";
-      }
-    });
+  void _goToPreviousPage() {
+    if (_currentImage > 0) {
+      _pageController.previousPage(
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  void _goToNextPage() {
+    if (_currentImage < images.length - 1) {
+      _pageController.nextPage(
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _pageController.removeListener(_pageListener);
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -86,140 +83,140 @@ class _InstructionPageState extends State<InstructionPage> {
 
     _setFirstTimeFlag(); // Store flag when visiting first page
 
-
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 3, 2, 2),
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text('Instruction Page'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Image.asset(
-              _imagepath,
-              height: 500,
-              width: 500,
+      body: Column(
+        children: [
+          Expanded(
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: images.length,
+              itemBuilder: (context, index) {
+                return Image.asset(
+                  images[index],
+                  // fit: BoxFit.cover,
+                );
+              },
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.fromLTRB(0, 8, 0, 0),
-                    height: 50,
-                    child: Center(
-                      child: Text(
-                        imagetxt,
-                        style: const TextStyle(
-                            fontSize: 20,
-                            color: Color.fromARGB(255, 251, 249, 249)),
-                      ),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  width: 100,
+                  margin: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                  height: 50,
+                  child: Center(
+                    child: Text(
+                      imagetxt[_currentImage],
+                      style: const TextStyle(
+                          fontSize: 20,
+                          color: Color.fromARGB(255, 251, 249, 249)),
                     ),
                   ),
                 ),
-              ],
-            ),
-            Row(
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                for (int j = 1; j < buttonnum; j++)
-                  Container(
-                    margin: const EdgeInsets.fromLTRB(2, 2, 2, 2),
-                    child: const Icon(
-                      size: 10,
-                      color: Colors.white,
-                      Icons.circle_outlined,
-                    ),
-                  ),
                 Container(
-                  margin: const EdgeInsets.fromLTRB(2, 2, 2, 2),
-                  child: const Icon(
-                    size: 10,
-                    color: Colors.white,
-                    Icons.circle,
+                    width: 100,
+                    child: Column(
+                      children: [
+                        if (_currentImage + 1 != 1)
+                          IconButton(
+                            color: Colors.white,
+                            icon: Icon(Icons.arrow_back),
+                            onPressed: _goToPreviousPage,
+                            disabledColor: Colors.grey,
+                          ),
+                      ],
+                    )),
+                Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      for (int j = 1; j < _currentImage + 1; j++)
+                        Container(
+                          margin: const EdgeInsets.fromLTRB(2, 2, 2, 2),
+                          child: const Icon(
+                            size: 10,
+                            color: Colors.white,
+                            Icons.circle_outlined,
+                          ),
+                        ),
+                      Container(
+                        margin: const EdgeInsets.fromLTRB(2, 2, 2, 2),
+                        child: const Icon(
+                          size: 10,
+                          color: Colors.white,
+                          Icons.circle,
+                        ),
+                      ),
+                      for (int i = _currentImage + 1; i < images.length; i++)
+                        Container(
+                          margin: const EdgeInsets.fromLTRB(2, 2, 2, 2),
+                          child: const Icon(
+                            size: 10,
+                            color: Colors.white,
+                            Icons.circle_outlined,
+                          ),
+                        ),
+                    ],
                   ),
                 ),
-                for (int i = buttonnum; i < totalimages; i++)
-                  Container(
-                    margin: const EdgeInsets.fromLTRB(2, 2, 2, 2),
-                    child: const Icon(
-                      size: 10,
-                      color: Colors.white,
-                      Icons.circle_outlined,
-                    ),
+                Container(
+                  width: 100,
+                  child: Column(
+                    children: [
+                      if (_currentImage + 1 < images.length)
+                        IconButton(
+                          padding: EdgeInsets.only(left: 0),
+                          color: Colors.white,
+                          icon: Icon(Icons.arrow_forward),
+                          onPressed: _goToNextPage,
+                          disabledColor: Colors.grey,
+                        ),
+                      if (_currentImage + 1 == images.length)
+                        Container(
+                          width: 100,
+                          height: 32,
+                          margin: const EdgeInsets.all(8.0),
+                          child: TextButton(
+                              style: const ButtonStyle(
+                                backgroundColor: MaterialStatePropertyAll(
+                                    Color.fromARGB(255, 244, 240, 240)),
+                                foregroundColor: MaterialStatePropertyAll(
+                                    Color.fromARGB(255, 11, 10, 10)),
+                              ),
+                              onPressed: togglePage2Content,
+                              // () {
+                              //   Navigator.push(
+                              //       context,
+                              //       MaterialPageRoute(
+                              //           builder: (context) => const SetPassword(
+                              //                 title: 'Set Password',
+                              //               )));
+                              // },
+                              child: const Text(
+                                "Start",
+                                style: TextStyle(fontSize: 15),
+                              )),
+                        )
+                    ],
                   ),
+                )
               ],
             ),
-            Row(
-              mainAxisAlignment: allignbutton,
-              children: [
-                if (buttonnum != 1)
-                  Container(
-                    width: 100,
-                    height: 50,
-                    margin: const EdgeInsets.all(8.0),
-                    child: TextButton(
-                        style: const ButtonStyle(
-                          backgroundColor: MaterialStatePropertyAll(
-                              Color.fromARGB(255, 241, 237, 237)),
-                          foregroundColor: MaterialStatePropertyAll(
-                              Color.fromARGB(255, 8, 7, 7)),
-                        ),
-                        onPressed: backimage,
-                        child: const Text(
-                          "Previous",
-                          style: TextStyle(fontSize: 20),
-                        )),
-                  ),
-                if (buttonnum < totalimages)
-                  Container(
-                    width: 100,
-                    height: 50,
-                    margin: const EdgeInsets.all(8.0),
-                    child: TextButton(
-                        style: const ButtonStyle(
-                          backgroundColor: MaterialStatePropertyAll(
-                              Color.fromARGB(255, 244, 240, 240)),
-                          foregroundColor: MaterialStatePropertyAll(
-                              Color.fromARGB(255, 11, 10, 10)),
-                        ),
-                        onPressed: nextimage,
-                        child: const Text(
-                          "Next",
-                          style: TextStyle(fontSize: 20),
-                        )),
-                  ),
-                if (buttonnum == totalimages)
-                  Container(
-                    width: 100,
-                    height: 50,
-                    margin: const EdgeInsets.all(8.0),
-                    child: TextButton(
-                        style: const ButtonStyle(
-                          backgroundColor: MaterialStatePropertyAll(
-                              Color.fromARGB(255, 244, 240, 240)),
-                          foregroundColor: MaterialStatePropertyAll(
-                              Color.fromARGB(255, 11, 10, 10)),
-                        ),
-                        onPressed: 
-                        // () {
-                        //   Navigator.push(
-                        //       context,
-                        //       MaterialPageRoute(
-                        //           builder: (context) => const SetPassword(
-                        //                 title: 'Set Password',
-                        //               )));
-                        // },
-                        togglePage2Content,
-                        child: const Text(
-                          "Done",
-                          style: TextStyle(fontSize: 20),
-                        )),
-                  ),
-              ],
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

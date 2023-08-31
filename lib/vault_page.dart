@@ -91,6 +91,10 @@ class _VaultPageState extends State<VaultPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Colors.amber,
+          contentTextStyle: const TextStyle(
+            color: Colors.black,
+          ),
           title: Text(txt),
           content: Container(
             width: 400,
@@ -101,7 +105,6 @@ class _VaultPageState extends State<VaultPage> {
                 TextField(
                   controller: textEditingController2,
                   style: const TextStyle(
-                    color: Color.fromARGB(255, 255, 254, 254),
                     fontSize: 25,
                   ),
                   decoration: const InputDecoration(hintText: "Name"),
@@ -110,10 +113,11 @@ class _VaultPageState extends State<VaultPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top:15),
+                      margin: const EdgeInsets.only(top: 15),
                       child: TextButton(
                           style: const ButtonStyle(
-                            minimumSize: MaterialStatePropertyAll(Size(100,45)),
+                            minimumSize:
+                                MaterialStatePropertyAll(Size(100, 45)),
                             backgroundColor: MaterialStatePropertyAll(
                                 Color.fromARGB(255, 244, 240, 240)),
                             foregroundColor: MaterialStatePropertyAll(
@@ -124,14 +128,14 @@ class _VaultPageState extends State<VaultPage> {
                               Navigator.pop(context);
                             });
                           },
-                          child: const Text("Cancel")
-                          ),
+                          child: const Text("Cancel")),
                     ),
                     Container(
-                      margin: EdgeInsets.only(top:15),
+                      margin: const EdgeInsets.only(top: 15),
                       child: TextButton(
                           style: const ButtonStyle(
-                            minimumSize: MaterialStatePropertyAll(Size(100,45)),
+                            minimumSize:
+                                MaterialStatePropertyAll(Size(100, 45)),
                             backgroundColor: MaterialStatePropertyAll(
                                 Color.fromARGB(255, 244, 240, 240)),
                             foregroundColor: MaterialStatePropertyAll(
@@ -145,8 +149,7 @@ class _VaultPageState extends State<VaultPage> {
                               Navigator.pop(context);
                             });
                           },
-                          child: const Text("Create")
-                          ),
+                          child: const Text("Create")),
                     ),
                   ],
                 ) // Add more options as needed
@@ -187,6 +190,7 @@ class _VaultPageState extends State<VaultPage> {
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(widget.title),
         actions: [
@@ -228,15 +232,22 @@ class _VaultPageState extends State<VaultPage> {
           FileSystemEntity entity = _filesAndFolders[index];
           return Container(
             margin: const EdgeInsets.fromLTRB(1, 1, 1, 1),
-            color: const Color.fromARGB(255, 90, 91, 92),
+            color: Colors.white,
             child: ListTile(
+              horizontalTitleGap: 0,
               // title: Text(entity.path.split('/').last),
-              leading: Icon(entity is File ? Icons.file_open : Icons.folder),
+              leading:
+                  Icon(entity is File ? Icons.file_open : Icons.folder),
               iconColor: (entity is File
                   ? const Color.fromARGB(255, 208, 190, 120)
-                  : Colors.yellow),
+                  : Colors.orangeAccent),
               subtitle: Text(fileSize((entity is File ? entity.path : ""))),
-              title: Text(entity.path.split('/').last),
+              title: Text(
+                entity.path.split('/').last,
+                style: const TextStyle(
+                  fontSize: 20,
+                ),
+              ),
               onTap: () {
                 if (entity is File) {
                   _handleFileTap(entity);
@@ -259,7 +270,7 @@ class _VaultPageState extends State<VaultPage> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Container(
-            margin: EdgeInsets.fromLTRB(0, 0, 0, 5),
+            margin: const EdgeInsets.fromLTRB(0, 0, 0, 5),
             child: FloatingActionButton(
               onPressed: _goToCalculator,
               tooltip: 'Calculator',
