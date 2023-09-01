@@ -51,7 +51,11 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
     if (showcalculatorPage) return const CalculatorPage(title: 'Calculator');
 
     if (showVaultPage) {
-      return VaultPage(title: 'Vault Page', setdir: "${appStorage.path}/MySecretFolder");
+      return VaultPage(
+        title: 'Vault Page', 
+        setdir: "${appStorage.path}/MySecretFolder", 
+        itemToMoveAndCopy: const [], 
+        );
       // return VaultPage(title: 'Vault Page', setdir: '/storage/emulated/0');
     }
 

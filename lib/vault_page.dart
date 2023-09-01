@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calculator_vault/calculator_page.dart';
 import 'package:open_file/open_file.dart';
+// ignore: unused_import
 import 'package:path_provider/path_provider.dart';
 // import 'package:file_selector/file_selector.dart';
 // import 'package:permission_handler/permission_handler.dart';
@@ -13,10 +15,19 @@ import 'package:path_provider/path_provider.dart';
 //   runApp(VaultPage(setdir: '/storage/emulated/0/', title: 'Vault Page',));
 // }
 
+// ignore: must_be_immutable
 class VaultPage extends StatefulWidget {
-  VaultPage({super.key, required this.title, required this.setdir});
-  String setdir;
   final String title;
+  String setdir;
+  List<FileSystemEntity> itemToMoveAndCopy;
+  String? copyOrMove;
+  // ignore: non_constant_identifier_names
+  VaultPage(
+      {super.key,
+      required this.title,
+      required this.setdir,
+      required this.itemToMoveAndCopy,
+      this.copyOrMove});
 
   @override
   State<VaultPage> createState() => _VaultPageState();
@@ -30,6 +41,10 @@ class _VaultPageState extends State<VaultPage> {
   bool goToCalculator = false;
   var appStorage;
   List<FileSystemEntity> selectedItems = [];
+  List<FileSystemEntity> itemToMoveAndCopy = [];
+  String currentPath = '';
+  String copyOrMove = "";
+
   // String inputFileFolder = "";
 
   @override
@@ -40,12 +55,21 @@ class _VaultPageState extends State<VaultPage> {
 
   @override
   Widget build(BuildContext context) {
-    // String currentPath = widget.setdir;
+    currentPath = widget.setdir;
+    copyOrMove =
+        ((widget.copyOrMove == 'copy' || copyOrMove == 'copy') ? 'copy' : "");
+    if (widget.itemToMoveAndCopy.isNotEmpty)
+      itemToMoveAndCopy = widget.itemToMoveAndCopy;
+    // if (widget.copyOrMove != null && widget.copyOrMove!.isNotEmpty) {
+    //   copyOrMove = widget.copyOrMove!;
+    // }
+    // if(widget.copyOrMove!.isNotEmpty) copyOrMove = widget.copyOrMove!;
 
     if (refreshVaultPage) {
       return VaultPage(
         title: 'Vault Page',
         setdir: widget.setdir,
+        itemToMoveAndCopy: const [],
       );
     }
     if (goToCalculator) {
@@ -54,9 +78,15 @@ class _VaultPageState extends State<VaultPage> {
       );
     }
     debugPrint('Selected items bool: ${selectedItems.isEmpty}');
+    debugPrint('itemsToMoveAndCopy bool: ${itemToMoveAndCopy.isEmpty}');
+    debugPrint('widget.copyOrMove bool: ${widget.copyOrMove}');
+    debugPrint('copyOrMove bool: $copyOrMove');
 
-    if (!selectedItems.isEmpty)
-      for (var i in selectedItems) debugPrint('Selected items: ${i.path}');
+    // if (selectedItems.isNotEmpty)
+    for (var i in selectedItems) debugPrint('Selected items: ${i.path}');
+    for (var i in itemToMoveAndCopy)
+      debugPrint('itemsToMoveAndCopy: ${i.path}');
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 97, 96, 96),
       appBar: AppBar(
@@ -93,98 +123,231 @@ class _VaultPageState extends State<VaultPage> {
           ),
         ],
       ),
-      body: ListView.builder(
-        // padding: const EdgeInsets.all(5),
-        itemCount: _filesAndFolders.length,
-        itemBuilder: (BuildContext context, int index) {
-          FileSystemEntity entity = _filesAndFolders[index];
-          return Container(
-            margin: const EdgeInsets.fromLTRB(1, 1, 1, 1),
-            color: (selectedItems.isEmpty
-                ? Color.fromARGB(255, 223, 218, 218)
-                : selectedColor(entity.path)),
-            child: ListTile(
-                horizontalTitleGap: 0,
-                // title: Text(entity.path.split('/').last),
-                leading: Icon(entity is File ? Icons.file_open : Icons.folder),
-                iconColor: (entity is File
-                    ? Color.fromARGB(255, 119, 100, 25)
-                    : Color.fromARGB(255, 239, 156, 48)),
-                subtitle: Text(
-                  (entity is File
-                      ? fileSize(entity.path)
-                      : itemsInFolder(entity.path)),
-                  style: TextStyle(color: Colors.black),
-                ),
-                title: Text(
-                  entity.path.split('/').last,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    color: Colors.black,
-                  ),
-                ),
-                onTap: () {
-                  // ignore: curly_braces_in_flow_control_structures
-                  if (selectedItems.isEmpty) {
-                    if (entity is File) {
-                      _handleFileTap(entity);
-                    } else if (entity is Directory) {
-                      _loadFilesAndFolders();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => VaultPage(
-                                    setdir: entity.path,
-                                    title: 'Vault Page',
-                                  )));
-                    }
-                  } else {
-                    debugPrint('On Tap Adding Selected Items..........');
-                    selectedView(entity);
-                  }
-                },
-                onLongPress: () {
-                  debugPrint('On Tap Adding Selected Items..........');
-                  selectedView(entity);
-                }),
-          );
-        },
-      ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+      body: Column(
         children: [
-          Container(
-            margin: const EdgeInsets.fromLTRB(0, 0, 0, 5),
-            child: FloatingActionButton(
-              onPressed: _goToCalculator,
-              tooltip: 'Calculator',
-              child: const Icon(Icons.calculate),
+          Expanded(
+            child: ListView.builder(
+              // padding: const EdgeInsets.all(5),
+              itemCount: _filesAndFolders.length,
+              itemBuilder: (BuildContext context, int index) {
+                FileSystemEntity entity = _filesAndFolders[index];
+                return Container(
+                  margin: const EdgeInsets.fromLTRB(1, 1, 1, 1),
+                  color: (selectedItems.isEmpty
+                      ? Color.fromARGB(255, 223, 218, 218)
+                      : selectedColor(entity.path)),
+                  child: ListTile(
+                      horizontalTitleGap: 0,
+                      // title: Text(entity.path.split('/').last),
+                      leading:
+                          Icon(entity is File ? Icons.file_open : Icons.folder),
+                      iconColor: (entity is File
+                          ? Color.fromARGB(255, 119, 100, 25)
+                          : Color.fromARGB(255, 239, 156, 48)),
+                      subtitle: Text(
+                        (entity is File
+                            ? fileSize(entity.path)
+                            : itemsInFolder(entity.path)),
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      title: Text(
+                        entity.path.split('/').last,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.black,
+                        ),
+                      ),
+                      onTap: () {
+                        // ignore: curly_braces_in_flow_control_structures
+                        if (selectedItems.isEmpty) {
+                          if (entity is File) {
+                            _handleFileTap(entity);
+                          } else if (entity is Directory) {
+                            _loadFilesAndFolders();
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => VaultPage(
+                                          setdir: entity.path,
+                                          title: 'Vault Page',
+                                          itemToMoveAndCopy: itemToMoveAndCopy,
+                                          copyOrMove: copyOrMove,
+                                        )));
+                                        // itemToMoveAndCopy=[];
+                                        _refreshVaultPage();
+
+                          }
+                        } else {
+                          debugPrint('On Tap Adding Selected Items..........');
+                          selectedView(entity);
+                        }
+                      },
+                      onLongPress: () {
+                        debugPrint('On Tap Adding Selected Items..........');
+                        selectedView(entity);
+                      }),
+                );
+              },
             ),
           ),
-          FloatingActionButton(
-            onPressed: () async {
-              final result =
-                  await FilePicker.platform.pickFiles(allowMultiple: true);
-              if (result == null) {
-                debugPrint('No files selected.');
-                return;
-              }
+          if (selectedItems.isNotEmpty)
+            Container(
+              height: 55,
+              color: Colors.white,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: IconButton(
+                      icon: const Icon(Icons.file_copy_outlined),
+                      onPressed: () {
+                        setState(() {
+                          itemToMoveAndCopy = selectedItems;
+                          selectedItems = [];
+                          copyOrMove = "copy";
+                          debugPrint("Copying.........$copyOrMove....");
+                        });
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: IconButton(
+                      icon: const Icon(Icons.cut),
+                      onPressed: () {
+                        itemToMoveAndCopy = selectedItems;
+                        setState(() {
+                          selectedItems = [];
+                        });
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: IconButton(
+                      icon: const Icon(Icons.edit),
+                      onPressed: () {
+                        setState(() {
+                          selectedItems = [];
+                        });
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () {
+                        setState(() {
+                          itemToMoveAndCopy = selectedItems;
+                          selectedItems = [];
+                        });
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        setState(() {
+                          selectedItems = [];
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          if (itemToMoveAndCopy.isNotEmpty)
+            Container(
+                height: 55,
+                color: Colors.white,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          setState(() {
+                            widget.itemToMoveAndCopy = [];
+                            itemToMoveAndCopy = [];
+                            selectedItems = [];
+                            _refreshVaultPage();
+                          });
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: IconButton(
+                        icon: const Icon(Icons.check),
+                        onPressed: () {
+                          setState(() {
+                            debugPrint('copyOrMove string: $copyOrMove');
+                            if (copyOrMove == "copy") copyItems();
+                            itemToMoveAndCopy = [];
+                            widget.itemToMoveAndCopy = [];
+                            copyOrMove = "";
+                            widget.copyOrMove = "";
+                            _refreshVaultPage();
 
-              for (var file in result.files) {
-                File newFile = File(
-                  "${widget.setdir}/${file.name}",
-                );
-                File(file.path!).copy(newFile.path);
-              }
-              _refreshVaultPage();
-            },
-            tooltip: 'Add file',
-            child: const Icon(Icons.add),
-          ),
+                            // if (copyOrMove == "move") moveItems();
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ))
         ],
+      ),
+      floatingActionButton: Container(
+        margin: ((selectedItems.isEmpty && itemToMoveAndCopy.isEmpty)
+            ? const EdgeInsets.fromLTRB(0, 0, 0, 0)
+            : const EdgeInsets.fromLTRB(0, 0, 0, 45)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              margin: const EdgeInsets.fromLTRB(0, 0, 0, 5),
+              child: FloatingActionButton(
+                onPressed: _goToCalculator,
+                tooltip: 'Calculator',
+                child: const Icon(Icons.calculate),
+              ),
+            ),
+            FloatingActionButton(
+              onPressed: () async {
+                final result =
+                    await FilePicker.platform.pickFiles(allowMultiple: true);
+                if (result == null) {
+                  debugPrint('No files selected.');
+                  return;
+                }
+
+                for (var file in result.files) {
+                  File newFile = File(
+                    "${widget.setdir}/${file.name}",
+                  );
+                  File(file.path!).copy(newFile.path);
+                }
+                _refreshVaultPage();
+              },
+              tooltip: 'Add file',
+              child: const Icon(Icons.add),
+            ),
+          ],
+        ),
       ),
     );
   } // @overide Build()
+
+  void copyItems() {
+    for (final itemPath in itemToMoveAndCopy) {
+      final item = File(itemPath.path);
+      if (item.existsSync()) {
+        final destinationPath = '$currentPath/${item.uri.pathSegments.last}';
+        item.copySync(destinationPath);
+        debugPrint('Copied: ${itemPath.path} to $destinationPath');
+      } else {
+        debugPrint('File/Folder does not exist: ${itemPath.path}');
+      }
+    }
+  }
 
   void _handleFileTap(File file) {
     OpenFile.open(file.path);
@@ -424,8 +587,8 @@ class _VaultPageState extends State<VaultPage> {
         }
       });
 
-      debugPrint('Number of files: $fileCount');
-      debugPrint('Number of folders: $folderCount');
+      // debugPrint('Number of files: $fileCount');
+      // debugPrint('Number of folders: $folderCount');
     } else {
       debugPrint('Directory not found.');
     }
@@ -453,12 +616,11 @@ class _VaultPageState extends State<VaultPage> {
       for (FileSystemEntity item in selectedItems) {
         if (entity.path == item.path) {
           selectedItems.remove(entity);
-          notSelected=false;
+          notSelected = false;
           break; // Exit the loop when the string is found
         }
       }
-      if(notSelected)
-      selectedItems.add(entity);
+      if (notSelected) selectedItems.add(entity);
     });
   }
 
