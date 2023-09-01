@@ -1,6 +1,10 @@
 # Flutter_calculator_vault
 
-Calculator vault app using flutter.
+This app has a Secret File system inside a Calculator. 
+
+## Developing Stage 
+
+[+]--Multiple options to manage the Files inside the Vault.
 
 ## Getting Started
 
