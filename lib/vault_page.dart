@@ -87,11 +87,37 @@ class _VaultPageState extends State<VaultPage> {
 
   void _popUpInput(BuildContext context, String txt) {
     TextEditingController textEditingController2 = TextEditingController();
+    final textFieldBorder = OutlineInputBorder(
+      borderSide: const BorderSide(
+        color: Color.fromARGB(255, 44, 44, 44),
+        width: 3,
+        style: BorderStyle.solid,
+      ),
+      borderRadius: BorderRadius.circular(7),
+    );
+    final threeDButton = BoxDecoration(
+      borderRadius: BorderRadius.circular(8),
+      gradient: const LinearGradient(
+        colors: [
+          Color.fromARGB(255, 112, 113, 112),
+          Color.fromARGB(255, 63, 65, 63)
+        ],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.3),
+          blurRadius: 5.0,
+          offset: const Offset(0, 3),
+        ),
+      ],
+    );
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Colors.amber,
+          backgroundColor: const Color.fromARGB(255, 97, 96, 96),
           contentTextStyle: const TextStyle(
             color: Colors.black,
           ),
@@ -102,44 +128,71 @@ class _VaultPageState extends State<VaultPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextField(
-                  controller: textEditingController2,
-                  style: const TextStyle(
-                    fontSize: 25,
-                  ),
-                  decoration: const InputDecoration(hintText: "Name"),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          // border: ,
+                          color: const Color.fromARGB(255, 91, 126, 78),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        margin: const EdgeInsets.all(8),
+                        height: 75,
+                        width: 100,
+                        // width: 370,
+                        child: TextField(
+                          textAlignVertical: TextAlignVertical.bottom,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 30,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: textEditingController.text,
+                            hintStyle: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 30,
+                            ),
+                            enabledBorder: textFieldBorder,
+                            focusedBorder: textFieldBorder,
+                          ),
+                          controller: textEditingController2,
+                          // textAlign: TextAlign.end,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
+                      decoration: threeDButton,
                       margin: const EdgeInsets.only(top: 15),
                       child: TextButton(
                           style: const ButtonStyle(
                             minimumSize:
                                 MaterialStatePropertyAll(Size(100, 45)),
-                            backgroundColor: MaterialStatePropertyAll(
-                                Color.fromARGB(255, 244, 240, 240)),
-                            foregroundColor: MaterialStatePropertyAll(
-                                Color.fromARGB(255, 11, 10, 10)),
                           ),
                           onPressed: () {
                             setState(() {
                               Navigator.pop(context);
                             });
                           },
-                          child: const Text("Cancel")),
+                          child: const Text(
+                            "Cancel",
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: Color.fromARGB(255, 245, 241, 241)),
+                          )),
                     ),
                     Container(
+                      decoration: threeDButton,
                       margin: const EdgeInsets.only(top: 15),
                       child: TextButton(
                           style: const ButtonStyle(
                             minimumSize:
                                 MaterialStatePropertyAll(Size(100, 45)),
-                            backgroundColor: MaterialStatePropertyAll(
-                                Color.fromARGB(255, 244, 240, 240)),
-                            foregroundColor: MaterialStatePropertyAll(
-                                Color.fromARGB(255, 11, 10, 10)),
                           ),
                           onPressed: () {
                             setState(() {
@@ -149,7 +202,12 @@ class _VaultPageState extends State<VaultPage> {
                               Navigator.pop(context);
                             });
                           },
-                          child: const Text("Create")),
+                          child: const Text(
+                            "Create",
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: Color.fromARGB(255, 245, 241, 241)),
+                          )),
                     ),
                   ],
                 ) // Add more options as needed
@@ -190,7 +248,7 @@ class _VaultPageState extends State<VaultPage> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color.fromARGB(255, 97, 96, 96),
       appBar: AppBar(
         title: Text(widget.title),
         actions: [
@@ -236,8 +294,7 @@ class _VaultPageState extends State<VaultPage> {
             child: ListTile(
               horizontalTitleGap: 0,
               // title: Text(entity.path.split('/').last),
-              leading:
-                  Icon(entity is File ? Icons.file_open : Icons.folder),
+              leading: Icon(entity is File ? Icons.file_open : Icons.folder),
               iconColor: (entity is File
                   ? const Color.fromARGB(255, 208, 190, 120)
                   : Colors.orangeAccent),

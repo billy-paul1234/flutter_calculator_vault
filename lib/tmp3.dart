@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:math_expressions/math_expressions.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:math_expressions/math_expressions.dart';
 import 'package:path_provider/path_provider.dart';
 import 'calculator_page.dart';
 import 'vault_page.dart';
@@ -15,11 +15,10 @@ class AuthendicationPage extends StatefulWidget {
 
 class _AuthendicationPageState extends State<AuthendicationPage> {
   TextEditingController textEditingController = TextEditingController();
-  String exp = "Enter Password Bellow";
+  String exp = "";
   double bmargin = 5;
   double bsize = 85;
   double bheight = 60;
-  bool showPage2Content = false;
   bool showcalculatorPage = false;
   bool showVaultPage = false;
   var appStorage;
@@ -44,6 +43,8 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
     return storedPassword == inputPassword;
   }
 
+  // void toVaultPage() async {}
+
   @override
   Widget build(BuildContext context) {
     // double screenWidth = MediaQuery.of(context).size.width;
@@ -55,41 +56,22 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
       // return VaultPage(title: 'Vault Page', setdir: '/storage/emulated/0');
     }
 
+    double bsize = 85;
+
     final textFieldBorder = OutlineInputBorder(
       borderSide: const BorderSide(
-        color: Color.fromARGB(255, 44, 44, 44),
-        width: 3,
         style: BorderStyle.solid,
       ),
-      borderRadius: BorderRadius.circular(7),
+      borderRadius: BorderRadius.circular(0),
     );
 
-    final threeDButton = BoxDecoration(
-      borderRadius: BorderRadius.circular(8),
-      gradient: const LinearGradient(
-        colors: [
-          Color.fromARGB(255, 112, 113, 112),
-          Color.fromARGB(255, 63, 65, 63)
-        ],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      ),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.3),
-          blurRadius: 5.0,
-          offset: const Offset(0, 3),
-        ),
-      ],
-    );
-
+    // ignore: dead_code
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Container(
-        decoration: threeDButton,
-        padding: const EdgeInsets.fromLTRB(2, 0, 2, 5),
+      backgroundColor: const Color.fromARGB(255, 39, 38, 38),
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
@@ -99,7 +81,7 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                   child: Container(
                     margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
                     decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 91, 126, 78),
+                      color: const Color.fromARGB(255, 146, 144, 143),
                       borderRadius: BorderRadius.circular(5),
                     ),
                     padding: const EdgeInsets.all(8),
@@ -108,7 +90,7 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                     child: Text(
                       exp,
                       style: const TextStyle(
-                        color: Colors.black,
+                        color: Colors.white,
                         fontSize: 30,
                       ),
                       textAlign: TextAlign.end,
@@ -122,16 +104,13 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      // border: ,
-                      color: const Color.fromARGB(255, 91, 126, 78),
+                      color: const Color.fromRGBO(255, 255, 255, 1),
                       borderRadius: BorderRadius.circular(5),
                     ),
                     margin: const EdgeInsets.all(8),
-                    height: 75,
-                    width: 100,
+                    height: 50,
                     // width: 370,
                     child: TextField(
-                      textAlignVertical: TextAlignVertical.bottom,
                       readOnly: true,
                       style: const TextStyle(
                         color: Colors.black,
@@ -167,11 +146,9 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
               children: [
                 Expanded(
                   child: Container(
-                    decoration: threeDButton,
                     margin: EdgeInsets.all(bmargin),
                     child: TextButton.icon(
-                      icon: const Icon(Icons.backspace_sharp,
-                          color: Color.fromARGB(255, 245, 241, 241)),
+                      icon: const Icon(Icons.backspace_sharp),
                       label: const Text(""),
                       onPressed: () {
                         setState(() {
@@ -182,12 +159,21 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                           }
                         });
                       },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
                     ),
                   ),
                 ),
                 Expanded(
                   child: Container(
-                    decoration: threeDButton,
                     margin: EdgeInsets.all(bmargin),
                     child: TextButton(
                       onPressed: () {
@@ -196,26 +182,25 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                               "${textEditingController.text}(";
                         });
                       },
-                      // style: ButtonStyle(
-                      //   backgroundColor: MaterialStatePropertyAll(Colors.white),
-                      //   foregroundColor: MaterialStatePropertyAll(Colors.black),
-                      //   minimumSize:
-                      //       MaterialStatePropertyAll(Size(bsize, bheight)),
-                      //   maximumSize:
-                      //       MaterialStatePropertyAll(Size(bsize, bheight)),
-                      // ),
+                      style: ButtonStyle(
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
                       child: const Text(
                         "(",
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Color.fromARGB(255, 245, 241, 241)),
+                        style: TextStyle(fontSize: 33),
                       ),
                     ),
                   ),
                 ),
                 Expanded(
                   child: Container(
-                    decoration: threeDButton,
                     margin: EdgeInsets.all(bmargin),
                     child: TextButton(
                       onPressed: () {
@@ -226,385 +211,25 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                           });
                         });
                       },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
                       child: const Text(
                         ")",
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Color.fromARGB(255, 245, 241, 241)),
+                        style: TextStyle(fontSize: 33),
                       ),
                     ),
                   ),
                 ),
                 Expanded(
                   child: Container(
-                    decoration: threeDButton,
-                    margin: EdgeInsets.all(bmargin),
-                    child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          textEditingController.text =
-                              "${textEditingController.text}+";
-                        });
-                      },
-                      child: const Text(
-                        "+",
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Color.fromARGB(255, 245, 241, 241)),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: threeDButton,
-                    margin: EdgeInsets.all(bmargin),
-                    child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          textEditingController.text =
-                              "${textEditingController.text}7";
-                        });
-                      },
-                      child: const Text(
-                        "7",
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Color.fromARGB(255, 245, 241, 241)),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: threeDButton,
-                    margin: EdgeInsets.all(bmargin),
-                    child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          textEditingController.text =
-                              "${textEditingController.text}8";
-                        });
-                      },
-                      child: const Text(
-                        "8",
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Color.fromARGB(255, 245, 241, 241)),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: threeDButton,
-                    margin: EdgeInsets.all(bmargin),
-                    child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          textEditingController.text =
-                              "${textEditingController.text}9";
-                        });
-                      },
-                      child: const Text(
-                        "9",
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Color.fromARGB(255, 245, 241, 241)),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: threeDButton,
-                    margin: EdgeInsets.all(bmargin),
-                    child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          textEditingController.text =
-                              "${textEditingController.text}-";
-                        });
-                      },
-                      child: const Text(
-                        "-",
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Color.fromARGB(255, 245, 241, 241)),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: threeDButton,
-                    margin: EdgeInsets.all(bmargin),
-                    child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          textEditingController.text =
-                              "${textEditingController.text}4";
-                        });
-                      },
-                      child: const Text(
-                        "4",
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Color.fromARGB(255, 245, 241, 241)),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: threeDButton,
-                    margin: EdgeInsets.all(bmargin),
-                    child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          textEditingController.text =
-                              "${textEditingController.text}5";
-                        });
-                      },
-                      child: const Text(
-                        "5",
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Color.fromARGB(255, 245, 241, 241)),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: threeDButton,
-                    margin: EdgeInsets.all(bmargin),
-                    child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          textEditingController.text =
-                              "${textEditingController.text}6";
-                        });
-                      },
-                      child: const Text(
-                        "6",
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Color.fromARGB(255, 245, 241, 241)),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: threeDButton,
-                    margin: EdgeInsets.all(bmargin),
-                    child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          textEditingController.text =
-                              "${textEditingController.text}*";
-                        });
-                      },
-                      child: const Text(
-                        "x",
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Color.fromARGB(255, 245, 241, 241)),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: threeDButton,
-                    margin: EdgeInsets.all(bmargin),
-                    child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          textEditingController.text =
-                              "${textEditingController.text}1";
-                        });
-                      },
-                      child: const Text(
-                        "1",
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Color.fromARGB(255, 245, 241, 241)),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: threeDButton,
-                    margin: EdgeInsets.all(bmargin),
-                    child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          textEditingController.text =
-                              "${textEditingController.text}2";
-                        });
-                      },
-                      child: const Text(
-                        "2",
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Color.fromARGB(255, 245, 241, 241)),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: threeDButton,
-                    margin: EdgeInsets.all(bmargin),
-                    child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          textEditingController.text =
-                              "${textEditingController.text}3";
-                        });
-                      },
-                      child: const Text(
-                        "3",
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Color.fromARGB(255, 245, 241, 241)),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: threeDButton,
-                    margin: EdgeInsets.all(bmargin),
-                    child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          textEditingController.text =
-                              "${textEditingController.text}/";
-                        });
-                      },
-                      child: const Text(
-                        "/",
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Color.fromARGB(255, 245, 241, 241)),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: threeDButton,
-                    margin: EdgeInsets.all(bmargin),
-                    child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          textEditingController.text =
-                              "${textEditingController.text}0";
-                        });
-                      },
-                      onLongPress: _showcalculatorPage,
-                      //() {
-                      //   Navigator.push(
-                      //       context,
-                      //       MaterialPageRoute(
-                      //           builder: (context) => AuthendicationPage(
-                      //                 title: 'Authendication Needed',
-                      //               )));
-                      // },
-
-                      child: const Text(
-                        "0",
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Color.fromARGB(255, 245, 241, 241)),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: threeDButton,
-                    margin: EdgeInsets.all(bmargin),
-                    child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          textEditingController.text =
-                              "${textEditingController.text}.";
-                        });
-                      },
-                      child: const Text(
-                        ".",
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Color.fromARGB(255, 245, 241, 241)),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: threeDButton,
-                    margin: EdgeInsets.all(bmargin),
-                    child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          textEditingController.text =
-                              "${textEditingController.text}%";
-                        });
-                      },
-                      child: const Text(
-                        "%",
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Color.fromARGB(255, 245, 241, 241)),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.0),
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color.fromARGB(244, 237, 111, 80),
-                          Color.fromARGB(244, 255, 51, 0),
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
-                          blurRadius: 5.0,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
                     margin: EdgeInsets.all(bmargin),
                     child: TextButton(
                       onPressed: () async {
@@ -616,7 +241,7 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                           textEditingController.text = "";
                           exp = textEditingController.text;
                           _showVaultPage();
-                          return;
+                          return ; 
 
                           // ignore: use_build_context_synchronously
                           // Navigator.push(
@@ -640,11 +265,480 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
                           }
                         });
                       },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
                       child: const Text(
                         "=",
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Color.fromARGB(255, 245, 241, 241)),
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}7";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "7",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}8";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "8",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}9";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "9",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}+";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "+",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}4";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "4",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}5";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "5",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}6";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "6",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}-";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "-",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}1";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "1",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}2";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "2",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}3";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "3",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}*";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "x",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}0";
+                        });
+                      },
+                      onLongPress: _showcalculatorPage,
+                      // () {
+                      //   Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //           builder: (context) => const AuthendicationPage(
+                      //                 title: 'Authendication Needed',
+                      //               )));
+                      // },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "0",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}.";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        ".",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}%";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "%",
+                        style: TextStyle(fontSize: 33),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(bmargin),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          textEditingController.text =
+                              "${textEditingController.text}/";
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        foregroundColor:
+                            const MaterialStatePropertyAll(Colors.black),
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                        maximumSize:
+                            MaterialStatePropertyAll(Size(bsize, bheight)),
+                      ),
+                      child: const Text(
+                        "/",
+                        style: TextStyle(fontSize: 33),
                       ),
                     ),
                   ),
@@ -654,10 +748,12 @@ class _AuthendicationPageState extends State<AuthendicationPage> {
           ],
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _incrementCounter,
-      //   child: const Icon(Icons.add),
-      // ), //s trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
+
+
+
+
+
+

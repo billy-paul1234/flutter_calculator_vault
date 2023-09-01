@@ -23,7 +23,7 @@ class _SetPasswordState extends State<SetPassword> {
   bool showPage2Content = true;
   // ignore: prefer_typing_uninitialized_variables
   var setpasswordpage;
-  var calculatorpage= const CalculatorPage(title: "Calculator");
+  var calculatorpage = const CalculatorPage(title: "Calculator");
 
   // void togglePage2Content() {
   //   setState(() {
@@ -46,6 +46,25 @@ class _SetPasswordState extends State<SetPassword> {
       await prefs.setBool('first_time_setPass', false);
     }
 
+    final threeDButton = BoxDecoration(
+      borderRadius: BorderRadius.circular(8),
+      gradient: const LinearGradient(
+        colors: [
+          Color.fromARGB(255, 112, 113, 112),
+          Color.fromARGB(255, 63, 65, 63)
+        ],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.3),
+          blurRadius: 5.0,
+          offset: const Offset(0, 3),
+        ),
+      ],
+    );
+
     final textFieldBorder = OutlineInputBorder(
       borderSide: const BorderSide(
         style: BorderStyle.solid,
@@ -54,12 +73,13 @@ class _SetPasswordState extends State<SetPassword> {
     );
     // ignore: dead_code
     setpasswordpage = Scaffold(
-      backgroundColor: const Color.fromARGB(255, 40, 39, 39),
-      drawerScrimColor: const Color.fromRGBO(255, 255, 255, 1),
+      // backgroundColor: const Color.fromARGB(255, 40, 39, 39),
+      // drawerScrimColor: const Color.fromRGBO(255, 255, 255, 1),
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
+      body: Container(
+        decoration: threeDButton,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -68,13 +88,14 @@ class _SetPasswordState extends State<SetPassword> {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: const Color.fromRGBO(255, 255, 255, 1),
+                      color: const Color.fromARGB(255, 91, 126, 78),
                       borderRadius: BorderRadius.circular(5),
                     ),
-                    margin: const EdgeInsets.fromLTRB(1, 1, 1, 200),
-                    height: 50,
+                    margin: const EdgeInsets.all(8),
+                    height: 75,
                     // width: 370,
                     child: TextField(
+                      textAlignVertical: TextAlignVertical.bottom,
                       readOnly: true,
                       style: const TextStyle(
                         color: Colors.black,
@@ -102,6 +123,7 @@ class _SetPasswordState extends State<SetPassword> {
                 Expanded(
                   child: Container(
                     margin: EdgeInsets.all(bmargin),
+                    decoration: threeDButton,
                     child: TextButton(
                       onPressed: () {
                         setState(() {
@@ -109,19 +131,11 @@ class _SetPasswordState extends State<SetPassword> {
                               "${textEditingController.text}7";
                         });
                       },
-                      style: ButtonStyle(
-                        backgroundColor: const MaterialStatePropertyAll(
-                            Color.fromRGBO(255, 255, 255, 1)),
-                        foregroundColor:
-                            const MaterialStatePropertyAll(Colors.black),
-                        minimumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                        maximumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                      ),
                       child: const Text(
                         "7",
-                        style: TextStyle(fontSize: 33),
+                        style: TextStyle(
+                            fontSize: 30,
+                            color: Color.fromARGB(255, 245, 241, 241)),
                       ),
                     ),
                   ),
@@ -129,6 +143,7 @@ class _SetPasswordState extends State<SetPassword> {
                 Expanded(
                   child: Container(
                     margin: EdgeInsets.all(bmargin),
+                    decoration: threeDButton,
                     child: TextButton(
                       onPressed: () {
                         setState(() {
@@ -138,19 +153,11 @@ class _SetPasswordState extends State<SetPassword> {
                           });
                         });
                       },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            const MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            const MaterialStatePropertyAll(Colors.black),
-                        minimumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                        maximumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                      ),
                       child: const Text(
                         "8",
-                        style: TextStyle(fontSize: 33),
+                        style: TextStyle(
+                            fontSize: 30,
+                            color: Color.fromARGB(255, 245, 241, 241)),
                       ),
                     ),
                   ),
@@ -158,6 +165,7 @@ class _SetPasswordState extends State<SetPassword> {
                 Expanded(
                   child: Container(
                     margin: EdgeInsets.all(bmargin),
+                    decoration: threeDButton,
                     child: TextButton(
                       onPressed: () {
                         setState(() {
@@ -165,19 +173,11 @@ class _SetPasswordState extends State<SetPassword> {
                               "${textEditingController.text}9";
                         });
                       },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            const MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            const MaterialStatePropertyAll(Colors.black),
-                        minimumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                        maximumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                      ),
                       child: const Text(
                         "9",
-                        style: TextStyle(fontSize: 33),
+                        style: TextStyle(
+                            fontSize: 30,
+                            color: Color.fromARGB(255, 245, 241, 241)),
                       ),
                     ),
                   ),
@@ -190,6 +190,7 @@ class _SetPasswordState extends State<SetPassword> {
                 Expanded(
                   child: Container(
                     margin: EdgeInsets.all(bmargin),
+                    decoration: threeDButton,
                     child: TextButton(
                       onPressed: () {
                         setState(() {
@@ -197,19 +198,11 @@ class _SetPasswordState extends State<SetPassword> {
                               "${textEditingController.text}4";
                         });
                       },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            const MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            const MaterialStatePropertyAll(Colors.black),
-                        minimumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                        maximumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                      ),
                       child: const Text(
                         "4",
-                        style: TextStyle(fontSize: 33),
+                        style: TextStyle(
+                            fontSize: 30,
+                            color: Color.fromARGB(255, 245, 241, 241)),
                       ),
                     ),
                   ),
@@ -217,6 +210,7 @@ class _SetPasswordState extends State<SetPassword> {
                 Expanded(
                   child: Container(
                     margin: EdgeInsets.all(bmargin),
+                    decoration: threeDButton,
                     child: TextButton(
                       onPressed: () {
                         setState(() {
@@ -226,19 +220,11 @@ class _SetPasswordState extends State<SetPassword> {
                           });
                         });
                       },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            const MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            const MaterialStatePropertyAll(Colors.black),
-                        minimumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                        maximumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                      ),
                       child: const Text(
                         "5",
-                        style: TextStyle(fontSize: 33),
+                        style: TextStyle(
+                            fontSize: 30,
+                            color: Color.fromARGB(255, 245, 241, 241)),
                       ),
                     ),
                   ),
@@ -246,6 +232,7 @@ class _SetPasswordState extends State<SetPassword> {
                 Expanded(
                   child: Container(
                     margin: EdgeInsets.all(bmargin),
+                    decoration: threeDButton,
                     child: TextButton(
                       onPressed: () {
                         setState(() {
@@ -253,19 +240,11 @@ class _SetPasswordState extends State<SetPassword> {
                               "${textEditingController.text}6";
                         });
                       },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            const MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            const MaterialStatePropertyAll(Colors.black),
-                        minimumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                        maximumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                      ),
                       child: const Text(
                         "6",
-                        style: TextStyle(fontSize: 33),
+                        style: TextStyle(
+                            fontSize: 30,
+                            color: Color.fromARGB(255, 245, 241, 241)),
                       ),
                     ),
                   ),
@@ -278,6 +257,7 @@ class _SetPasswordState extends State<SetPassword> {
                 Expanded(
                   child: Container(
                     margin: EdgeInsets.all(bmargin),
+                    decoration: threeDButton,
                     child: TextButton(
                       onPressed: () {
                         setState(() {
@@ -285,19 +265,11 @@ class _SetPasswordState extends State<SetPassword> {
                               "${textEditingController.text}1";
                         });
                       },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            const MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            const MaterialStatePropertyAll(Colors.black),
-                        minimumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                        maximumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                      ),
                       child: const Text(
                         "1",
-                        style: TextStyle(fontSize: 33),
+                        style: TextStyle(
+                            fontSize: 30,
+                            color: Color.fromARGB(255, 245, 241, 241)),
                       ),
                     ),
                   ),
@@ -305,6 +277,7 @@ class _SetPasswordState extends State<SetPassword> {
                 Expanded(
                   child: Container(
                     margin: EdgeInsets.all(bmargin),
+                    decoration: threeDButton,
                     child: TextButton(
                       onPressed: () {
                         setState(() {
@@ -314,19 +287,11 @@ class _SetPasswordState extends State<SetPassword> {
                           });
                         });
                       },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            const MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            const MaterialStatePropertyAll(Colors.black),
-                        minimumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                        maximumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                      ),
                       child: const Text(
                         "2",
-                        style: TextStyle(fontSize: 33),
+                        style: TextStyle(
+                            fontSize: 30,
+                            color: Color.fromARGB(255, 245, 241, 241)),
                       ),
                     ),
                   ),
@@ -334,6 +299,7 @@ class _SetPasswordState extends State<SetPassword> {
                 Expanded(
                   child: Container(
                     margin: EdgeInsets.all(bmargin),
+                    decoration: threeDButton,
                     child: TextButton(
                       onPressed: () {
                         setState(() {
@@ -341,19 +307,11 @@ class _SetPasswordState extends State<SetPassword> {
                               "${textEditingController.text}3";
                         });
                       },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            const MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            const MaterialStatePropertyAll(Colors.black),
-                        minimumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                        maximumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                      ),
                       child: const Text(
                         "3",
-                        style: TextStyle(fontSize: 33),
+                        style: TextStyle(
+                            fontSize: 30,
+                            color: Color.fromARGB(255, 245, 241, 241)),
                       ),
                     ),
                   ),
@@ -366,6 +324,7 @@ class _SetPasswordState extends State<SetPassword> {
                 Expanded(
                   child: Container(
                     margin: EdgeInsets.all(bmargin),
+                    decoration: threeDButton,
                     child: TextButton(
                       onPressed: () {
                         setState(() {
@@ -373,19 +332,11 @@ class _SetPasswordState extends State<SetPassword> {
                               "${textEditingController.text}.";
                         });
                       },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            const MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            const MaterialStatePropertyAll(Colors.black),
-                        minimumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                        maximumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                      ),
                       child: const Text(
                         ".",
-                        style: TextStyle(fontSize: 33),
+                        style: TextStyle(
+                            fontSize: 30,
+                            color: Color.fromARGB(255, 245, 241, 241)),
                       ),
                     ),
                   ),
@@ -393,6 +344,7 @@ class _SetPasswordState extends State<SetPassword> {
                 Expanded(
                   child: Container(
                     margin: EdgeInsets.all(bmargin),
+                    decoration: threeDButton,
                     child: TextButton(
                       onPressed: () {
                         setState(() {
@@ -402,19 +354,11 @@ class _SetPasswordState extends State<SetPassword> {
                           });
                         });
                       },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            const MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            const MaterialStatePropertyAll(Colors.black),
-                        minimumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                        maximumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                      ),
                       child: const Text(
                         "0",
-                        style: TextStyle(fontSize: 33),
+                        style: TextStyle(
+                            fontSize: 30,
+                            color: Color.fromARGB(255, 245, 241, 241)),
                       ),
                     ),
                   ),
@@ -422,8 +366,10 @@ class _SetPasswordState extends State<SetPassword> {
                 Expanded(
                   child: Container(
                     margin: EdgeInsets.all(bmargin),
+                    decoration: threeDButton,
                     child: TextButton.icon(
-                      icon: const Icon(Icons.backspace_sharp),
+                      icon: const Icon(Icons.backspace_sharp,
+                          color: Color.fromARGB(255, 245, 241, 241)),
                       label: const Text(""),
                       onPressed: () {
                         setState(() {
@@ -434,16 +380,6 @@ class _SetPasswordState extends State<SetPassword> {
                           }
                         });
                       },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            const MaterialStatePropertyAll(Colors.white),
-                        foregroundColor:
-                            const MaterialStatePropertyAll(Colors.black),
-                        minimumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                        maximumSize:
-                            MaterialStatePropertyAll(Size(bsize, bheight)),
-                      ),
                     ),
                   ),
                 ),
@@ -453,11 +389,25 @@ class _SetPasswordState extends State<SetPassword> {
               children: [
                 Expanded(
                   child: Container(
-                    margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
                     decoration: BoxDecoration(
-                      color: const Color.fromRGBO(255, 255, 255, 1),
-                      borderRadius: BorderRadius.circular(5),
+                      borderRadius: BorderRadius.circular(8.0),
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color.fromARGB(244, 237, 111, 80),
+                          Color.fromARGB(244, 255, 51, 0),
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 5.0,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
+                    margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
                     // margin: const EdgeInsets.fromLTRB(1, 1, 1, 1),
                     height: 50,
                     child: TextButton(
@@ -468,14 +418,15 @@ class _SetPasswordState extends State<SetPassword> {
                         // Navigator.pushReplacementNamed(context, '/second');
                         // ignore: use_build_context_synchronously
                         // Navigator.push(context, MaterialPageRoute(builder: (context) => const CalculatorPage(title: 'Calculator pas',)));
-                         // Store flag when visiting first page
+                        // Store flag when visiting first page
                         setState(() {
-                        showPage2Content = !showPage2Content;                  });
+                          showPage2Content = !showPage2Content;
+                        });
                       },
                       child: const Text(
                         "Submit",
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Color.fromARGB(255, 245, 241, 241),
                           fontSize: 30,
                         ),
                       ),
@@ -488,8 +439,7 @@ class _SetPasswordState extends State<SetPassword> {
         ),
       ),
     );
-    if( showPage2Content ) return setpasswordpage;
+    if (showPage2Content) return setpasswordpage;
     return calculatorpage;
-
   }
 }
