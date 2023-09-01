@@ -15,7 +15,7 @@ class AuthendicationPage extends StatefulWidget {
 
 class _AuthendicationPageState extends State<AuthendicationPage> {
   TextEditingController textEditingController = TextEditingController();
-  String exp = "Enter Password Bellow";
+  String exp = "";
   double bmargin = 5;
   double bsize = 85;
   double bheight = 60;

@@ -29,6 +29,7 @@ class _VaultPageState extends State<VaultPage> {
   bool refreshVaultPage = false;
   bool goToCalculator = false;
   var appStorage;
+  List<FileSystemEntity> selectedItems = [];
   // String inputFileFolder = "";
 
   @override
@@ -36,6 +37,154 @@ class _VaultPageState extends State<VaultPage> {
     super.initState();
     _loadFilesAndFolders();
   }
+
+  @override
+  Widget build(BuildContext context) {
+    // String currentPath = widget.setdir;
+
+    if (refreshVaultPage) {
+      return VaultPage(
+        title: 'Vault Page',
+        setdir: widget.setdir,
+      );
+    }
+    if (goToCalculator) {
+      return const CalculatorPage(
+        title: 'Calculator Page',
+      );
+    }
+    debugPrint('Selected items bool: ${selectedItems.isEmpty}');
+
+    if (!selectedItems.isEmpty)
+      for (var i in selectedItems) debugPrint('Selected items: ${i.path}');
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 97, 96, 96),
+      appBar: AppBar(
+        title: Text(widget.title),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: _handleMenuItemClick,
+            itemBuilder: (BuildContext context) {
+              return [
+                const PopupMenuItem<String>(
+                  value: 'createFolder',
+                  child: Text('Create Folder'),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'createFile',
+                  child: Text('Create File'),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'goToCalculator',
+                  child: Text('Calculator'),
+                ),
+                const PopupMenuDivider(),
+                const PopupMenuItem<String>(
+                  value: 'moreOptions',
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: Icon(Icons.more_horiz),
+                    title: Text('More Options'),
+                    trailing: Icon(Icons.keyboard_arrow_right),
+                  ),
+                ),
+              ];
+            },
+          ),
+        ],
+      ),
+      body: ListView.builder(
+        // padding: const EdgeInsets.all(5),
+        itemCount: _filesAndFolders.length,
+        itemBuilder: (BuildContext context, int index) {
+          FileSystemEntity entity = _filesAndFolders[index];
+          return Container(
+            margin: const EdgeInsets.fromLTRB(1, 1, 1, 1),
+            color: (selectedItems.isEmpty
+                ? Color.fromARGB(255, 223, 218, 218)
+                : selectedColor(entity.path)),
+            child: ListTile(
+                horizontalTitleGap: 0,
+                // title: Text(entity.path.split('/').last),
+                leading: Icon(entity is File ? Icons.file_open : Icons.folder),
+                iconColor: (entity is File
+                    ? Color.fromARGB(255, 119, 100, 25)
+                    : Color.fromARGB(255, 239, 156, 48)),
+                subtitle: Text(
+                  (entity is File
+                      ? fileSize(entity.path)
+                      : itemsInFolder(entity.path)),
+                  style: TextStyle(color: Colors.black),
+                ),
+                title: Text(
+                  entity.path.split('/').last,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    color: Colors.black,
+                  ),
+                ),
+                onTap: () {
+                  // ignore: curly_braces_in_flow_control_structures
+                  if (selectedItems.isEmpty) {
+                    if (entity is File) {
+                      _handleFileTap(entity);
+                    } else if (entity is Directory) {
+                      _loadFilesAndFolders();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => VaultPage(
+                                    setdir: entity.path,
+                                    title: 'Vault Page',
+                                  )));
+                    }
+                  } else {
+                    debugPrint('On Tap Adding Selected Items..........');
+                    selectedView(entity);
+                  }
+                },
+                onLongPress: () {
+                  debugPrint('On Tap Adding Selected Items..........');
+                  selectedView(entity);
+                }),
+          );
+        },
+      ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            margin: const EdgeInsets.fromLTRB(0, 0, 0, 5),
+            child: FloatingActionButton(
+              onPressed: _goToCalculator,
+              tooltip: 'Calculator',
+              child: const Icon(Icons.calculate),
+            ),
+          ),
+          FloatingActionButton(
+            onPressed: () async {
+              final result =
+                  await FilePicker.platform.pickFiles(allowMultiple: true);
+              if (result == null) {
+                debugPrint('No files selected.');
+                return;
+              }
+
+              for (var file in result.files) {
+                File newFile = File(
+                  "${widget.setdir}/${file.name}",
+                );
+                File(file.path!).copy(newFile.path);
+              }
+              _refreshVaultPage();
+            },
+            tooltip: 'Add file',
+            child: const Icon(Icons.add),
+          ),
+        ],
+      ),
+    );
+  } // @overide Build()
 
   void _handleFileTap(File file) {
     OpenFile.open(file.path);
@@ -70,7 +219,7 @@ class _VaultPageState extends State<VaultPage> {
 
   Future<void> createFolder([String? inputFileFolder]) async {
     // var tmp = await _popUpInput(context, "Create Folder");
-    appStorage = await getApplicationDocumentsDirectory();
+    // appStorage = await getApplicationDocumentsDirectory();
     final Directory newDirectory =
         Directory("${widget.setdir}/$inputFileFolder");
 
@@ -82,6 +231,27 @@ class _VaultPageState extends State<VaultPage> {
       newDirectory.createSync();
       _refreshVaultPage();
       debugPrint('Directory created successfully.');
+    }
+  }
+
+  Future<void> createFile([String? inputFileFolder]) async {
+    // var tmp = await _popUpInput(context, "Create Folder");
+    // appStorage = await getApplicationDocumentsDirectory();
+    String filePath = "${widget.setdir}/$inputFileFolder";
+
+    File file = File(filePath);
+
+    try {
+      file.createSync(); // Create the file synchronously
+
+      if (file.existsSync()) {
+        _refreshVaultPage();
+        debugPrint('File created successfully at: $filePath');
+      } else {
+        debugPrint('File creation failed.');
+      }
+    } catch (e) {
+      debugPrint('An error occurred: $e');
     }
   }
 
@@ -148,7 +318,7 @@ class _VaultPageState extends State<VaultPage> {
                             fontSize: 30,
                           ),
                           decoration: InputDecoration(
-                            hintText: textEditingController.text,
+                            hintText: "Name",
                             hintStyle: const TextStyle(
                               color: Colors.black,
                               fontSize: 30,
@@ -197,8 +367,12 @@ class _VaultPageState extends State<VaultPage> {
                           onPressed: () {
                             setState(() {
                               var inputFileFolder = textEditingController2.text;
-                              if (txt == "Create Folder")
+                              if (txt == "Create Folder") {
                                 createFolder(inputFileFolder);
+                              }
+                              if (txt == "Create File") {
+                                createFile(inputFileFolder);
+                              }
                               Navigator.pop(context);
                             });
                           },
@@ -221,7 +395,7 @@ class _VaultPageState extends State<VaultPage> {
 
   Future<void> _handleMenuItemClick(String value) async {
     // Handle the clicked menu item
-    // print('Clicked: $value');
+    // debugPrint('Clicked: $value');
     if (value == 'createFolder') {
       // createFolder();
       _popUpInput(context, "Create Folder");
@@ -229,146 +403,71 @@ class _VaultPageState extends State<VaultPage> {
     if (value == 'goToCalculator') {
       _goToCalculator();
     }
+    if (value == 'createFile') {
+      _popUpInput(context, "Create File");
+    }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    String currentPath = widget.setdir;
+  String itemsInFolder(String path) {
+    String directoryPath = path; // Replace with the actual directory path
 
-    if (refreshVaultPage) {
-      return VaultPage(
-        title: 'Vault Page',
-        setdir: widget.setdir,
-      );
+    int fileCount = 0;
+    int folderCount = 0;
+
+    Directory directory = Directory(directoryPath);
+    if (directory.existsSync()) {
+      directory.listSync().forEach((entity) {
+        if (entity is File) {
+          fileCount++;
+        } else if (entity is Directory) {
+          folderCount++;
+        }
+      });
+
+      debugPrint('Number of files: $fileCount');
+      debugPrint('Number of folders: $folderCount');
+    } else {
+      debugPrint('Directory not found.');
     }
-    if (goToCalculator) {
-      return const CalculatorPage(
-        title: 'Calculator Page',
-      );
-    }
-
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 97, 96, 96),
-      appBar: AppBar(
-        title: Text(widget.title),
-        actions: [
-          PopupMenuButton<String>(
-            onSelected: _handleMenuItemClick,
-            itemBuilder: (BuildContext context) {
-              return [
-                const PopupMenuItem<String>(
-                  value: 'createFolder',
-                  child: Text('Create Folder'),
-                ),
-                const PopupMenuItem<String>(
-                  value: 'option2',
-                  child: Text('Create File'),
-                ),
-                const PopupMenuItem<String>(
-                  value: 'goToCalculator',
-                  child: Text('Calculator'),
-                ),
-                const PopupMenuDivider(),
-                const PopupMenuItem<String>(
-                  value: 'moreOptions',
-                  child: ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: Icon(Icons.more_horiz),
-                    title: Text('More Options'),
-                    trailing: Icon(Icons.keyboard_arrow_right),
-                  ),
-                ),
-              ];
-            },
-          ),
-        ],
-      ),
-      body: ListView.builder(
-        // padding: const EdgeInsets.all(5),
-        itemCount: _filesAndFolders.length,
-        itemBuilder: (BuildContext context, int index) {
-          FileSystemEntity entity = _filesAndFolders[index];
-          return Container(
-            margin: const EdgeInsets.fromLTRB(1, 1, 1, 1),
-            color: Colors.white,
-            child: ListTile(
-              horizontalTitleGap: 0,
-              // title: Text(entity.path.split('/').last),
-              leading: Icon(entity is File ? Icons.file_open : Icons.folder),
-              iconColor: (entity is File
-                  ? const Color.fromARGB(255, 208, 190, 120)
-                  : Colors.orangeAccent),
-              subtitle: Text(fileSize((entity is File ? entity.path : ""))),
-              title: Text(
-                entity.path.split('/').last,
-                style: const TextStyle(
-                  fontSize: 20,
-                ),
-              ),
-              onTap: () {
-                if (entity is File) {
-                  _handleFileTap(entity);
-                } else if (entity is Directory) {
-                  _loadFilesAndFolders();
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => VaultPage(
-                                setdir: entity.path,
-                                title: 'Vault Page',
-                              )));
-                }
-              },
-            ),
-          );
-        },
-      ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            margin: const EdgeInsets.fromLTRB(0, 0, 0, 5),
-            child: FloatingActionButton(
-              onPressed: _goToCalculator,
-              tooltip: 'Calculator',
-              child: const Icon(Icons.calculate),
-            ),
-          ),
-          FloatingActionButton(
-            onPressed: () async {
-              final result =
-                  await FilePicker.platform.pickFiles(allowMultiple: true);
-              if (result == null) {
-                debugPrint('No files selected.');
-                return;
-              }
-
-              for (var file in result.files) {
-                File newFile = File(
-                  "${widget.setdir}/${file.name}",
-                );
-                File(file.path!).copy(newFile.path);
-              }
-              _refreshVaultPage();
-            },
-            tooltip: 'Add file',
-            child: const Icon(Icons.add),
-          ),
-        ],
-      ),
-    );
+    return '$folderCount Folders/$fileCount Files';
   }
-}
 
-String fileSize(String path) {
-  if (path == "") return "";
+  String fileSize(String path) {
+    if (path == "") return "";
 
-  var file = File(path);
-  var size = file.lengthSync();
-  String s = size >= 1000000000
-      ? '${(size / 1000000000).toStringAsFixed(2)} GB'
-      : (size >= 1000000
-          ? '${(size / 1000000).toStringAsFixed(2)} MB'
-          : (size >= 1000 ? '${(size / 1000).toStringAsFixed(2)} KB' : "0 b"));
-  return s;
+    var file = File(path);
+    var size = file.lengthSync();
+    String Size = size >= 1000000000
+        ? '${(size / 1000000000).toStringAsFixed(2)} GB'
+        : (size >= 1000000
+            ? '${(size / 1000000).toStringAsFixed(2)} MB'
+            : (size >= 1000
+                ? '${(size / 1000).toStringAsFixed(2)} KB'
+                : "0 b"));
+    return Size;
+  }
+
+  selectedView(FileSystemEntity entity) {
+    setState(() {
+      bool notSelected = true;
+      for (FileSystemEntity item in selectedItems) {
+        if (entity.path == item.path) {
+          selectedItems.remove(entity);
+          notSelected=false;
+          break; // Exit the loop when the string is found
+        }
+      }
+      if(notSelected)
+      selectedItems.add(entity);
+    });
+  }
+
+  selectedColor(String path) {
+    for (FileSystemEntity item in selectedItems) {
+      if (path == item.path) {
+        return Colors.blue;
+        break; // Exit the loop when the string is found
+      }
+    }
+  }
 }
