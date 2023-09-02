@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calculator_vault/calculator_page.dart';
 import 'package:open_file/open_file.dart';
+import 'package:path/path.dart' as path;
 // ignore: unused_import
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -44,7 +45,7 @@ class _VaultPageState extends State<VaultPage> {
   var appStorage;
   List<FileSystemEntity> selectedItems = [];
   List<FileSystemEntity> itemToMoveAndCopy = [];
-  String currentPath = '';
+  String currentDirectory = '';
   String copyOrMove = "";
   // bool _isMovedOrCopied = true;
   // isMovedOrCopied() async {
@@ -73,7 +74,7 @@ class _VaultPageState extends State<VaultPage> {
     //   _refreshVaultPage();
     // }
 
-    currentPath = widget.setdir;
+    currentDirectory = widget.setdir;
     copyOrMove =
         ((widget.copyOrMove == 'copy' || copyOrMove == 'copy') ? 'copy' : "");
     if (widget.itemToMoveAndCopy.isNotEmpty)
@@ -143,22 +144,24 @@ class _VaultPageState extends State<VaultPage> {
       ),
       body: WillPopScope(
         onWillPop: () async {
-          String previousPage;
           appStorage = await getApplicationDocumentsDirectory();
-          // String previousPage='${appStorage.path}/MySecretFolder';
-          // if(currentPath != '${appStorage.path}/MySecretFolder') {
-            previousPage =
-              currentPath.replaceAll('/${currentPath.split('/').last}', "");
-          // }
-          previousPage.replaceAll('ata','/data');
+          String parentDirectory='${appStorage.path}/MySecretFolder';
+          if(currentDirectory.split('/').last != 'MySecretFolder') {
+            parentDirectory = path.dirname(currentDirectory);
+          }
+          
           debugPrint(
-              'Back button presed:  $previousPage !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+              'appStorage.path: ${appStorage.path}/MySecretFolder !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+          debugPrint(
+              'currentDirectory:  ${currentDirectory.split('/').last} !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+          debugPrint(
+              'parentDirectory:  $parentDirectory !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
           // ignore: use_build_context_synchronously
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => VaultPage(
-                        setdir: previousPage,
+                        setdir: parentDirectory,
                         title: 'Vault Page',
                         itemToMoveAndCopy: itemToMoveAndCopy,
                         copyOrMove: copyOrMove,
@@ -385,7 +388,7 @@ class _VaultPageState extends State<VaultPage> {
     for (final itemPath in itemToMoveAndCopy) {
       final item = File(itemPath.path);
       if (item.existsSync()) {
-        final destinationPath = '$currentPath/${item.uri.pathSegments.last}';
+        final destinationPath = '$currentDirectory/${item.uri.pathSegments.last}';
         item.copySync(destinationPath);
         debugPrint('Copied: ${itemPath.path} to $destinationPath');
       } else {
