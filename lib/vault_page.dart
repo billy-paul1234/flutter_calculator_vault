@@ -162,7 +162,10 @@ class _VaultPageState extends State<VaultPage> {
                     child: const Text('No'),
                   ),
                   TextButton(
-                    onPressed: () => Navigator.of(context).pop(true),
+                    // onPressed: () => Navigator.of(context).pop(true),
+                    onPressed: () {
+                      exit(0);
+                    },
                     child: const Text('Yes'),
                   ),
                 ],
