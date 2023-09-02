@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calculator_vault/calculator_page.dart';
 import 'package:open_file/open_file.dart';
 // ignore: unused_import
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:file_selector/file_selector.dart';
 // import 'package:permission_handler/permission_handler.dart';
 // import 'package:math_expressions/math_expressions.dart';
@@ -44,8 +46,18 @@ class _VaultPageState extends State<VaultPage> {
   List<FileSystemEntity> itemToMoveAndCopy = [];
   String currentPath = '';
   String copyOrMove = "";
+  // bool _isMovedOrCopied = true;
+  // isMovedOrCopied() async {
+  //   WidgetsFlutterBinding.ensureInitialized();
+  //   final prefs = await SharedPreferences.getInstance();
+  //   bool ismovedOrCopied = prefs.getBool('movedOrCopied') ?? false;
+  //   return ismovedOrCopied;
+  // }
 
-  // String inputFileFolder = "";
+  // Future<void> movedOrCopied() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   await prefs.setBool('movedOrCopied', true);
+  // }
 
   @override
   void initState() {
@@ -55,6 +67,12 @@ class _VaultPageState extends State<VaultPage> {
 
   @override
   Widget build(BuildContext context) {
+    // var tmp = isMovedOrCopied();
+    // if (_isMovedOrCopied && tmp) {
+    //   _isMovedOrCopied = false;
+    //   _refreshVaultPage();
+    // }
+
     currentPath = widget.setdir;
     copyOrMove =
         ((widget.copyOrMove == 'copy' || copyOrMove == 'copy') ? 'copy' : "");
@@ -123,177 +141,204 @@ class _VaultPageState extends State<VaultPage> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              // padding: const EdgeInsets.all(5),
-              itemCount: _filesAndFolders.length,
-              itemBuilder: (BuildContext context, int index) {
-                FileSystemEntity entity = _filesAndFolders[index];
-                return Container(
-                  margin: const EdgeInsets.fromLTRB(1, 1, 1, 1),
-                  color: (selectedItems.isEmpty
-                      ? Color.fromARGB(255, 223, 218, 218)
-                      : selectedColor(entity.path)),
-                  child: ListTile(
-                      horizontalTitleGap: 0,
-                      // title: Text(entity.path.split('/').last),
-                      leading:
-                          Icon(entity is File ? Icons.file_open : Icons.folder),
-                      iconColor: (entity is File
-                          ? Color.fromARGB(255, 119, 100, 25)
-                          : Color.fromARGB(255, 239, 156, 48)),
-                      subtitle: Text(
-                        (entity is File
-                            ? fileSize(entity.path)
-                            : itemsInFolder(entity.path)),
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      title: Text(
-                        entity.path.split('/').last,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          color: Colors.black,
+      body: WillPopScope(
+        onWillPop: () async {
+          String previousPage;
+          appStorage = await getApplicationDocumentsDirectory();
+          // String previousPage='${appStorage.path}/MySecretFolder';
+          // if(currentPath != '${appStorage.path}/MySecretFolder') {
+            previousPage =
+              currentPath.replaceAll('/${currentPath.split('/').last}', "");
+          // }
+          previousPage.replaceAll('ata','/data');
+          debugPrint(
+              'Back button presed:  $previousPage !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+          // ignore: use_build_context_synchronously
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => VaultPage(
+                        setdir: previousPage,
+                        title: 'Vault Page',
+                        itemToMoveAndCopy: itemToMoveAndCopy,
+                        copyOrMove: copyOrMove,
+                      )));
+          return true;
+        },
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                // padding: const EdgeInsets.all(5),
+                itemCount: _filesAndFolders.length,
+                itemBuilder: (BuildContext context, int index) {
+                  FileSystemEntity entity = _filesAndFolders[index];
+                  return Container(
+                    margin: const EdgeInsets.fromLTRB(1, 1, 1, 1),
+                    color: (selectedItems.isEmpty
+                        ? Color.fromARGB(255, 223, 218, 218)
+                        : selectedColor(entity.path)),
+                    child: ListTile(
+                        horizontalTitleGap: 0,
+                        // title: Text(entity.path.split('/').last),
+                        leading: Icon(
+                            entity is File ? Icons.file_open : Icons.folder),
+                        iconColor: (entity is File
+                            ? Color.fromARGB(255, 119, 100, 25)
+                            : Color.fromARGB(255, 239, 156, 48)),
+                        subtitle: Text(
+                          (entity is File
+                              ? fileSize(entity.path)
+                              : itemsInFolder(entity.path)),
+                          style: TextStyle(color: Colors.black),
                         ),
-                      ),
-                      onTap: () {
-                        // ignore: curly_braces_in_flow_control_structures
-                        if (selectedItems.isEmpty) {
-                          if (entity is File) {
-                            _handleFileTap(entity);
-                          } else if (entity is Directory) {
-                            _loadFilesAndFolders();
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => VaultPage(
-                                          setdir: entity.path,
-                                          title: 'Vault Page',
-                                          itemToMoveAndCopy: itemToMoveAndCopy,
-                                          copyOrMove: copyOrMove,
-                                        )));
-                                        // itemToMoveAndCopy=[];
-                                        _refreshVaultPage();
-
+                        title: Text(
+                          entity.path.split('/').last,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            color: Colors.black,
+                          ),
+                        ),
+                        onTap: () {
+                          // ignore: curly_braces_in_flow_control_structures
+                          if (selectedItems.isEmpty) {
+                            if (entity is File) {
+                              _handleFileTap(entity);
+                            } else if (entity is Directory) {
+                              _loadFilesAndFolders();
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => VaultPage(
+                                            setdir: entity.path,
+                                            title: 'Vault Page',
+                                            itemToMoveAndCopy:
+                                                itemToMoveAndCopy,
+                                            copyOrMove: copyOrMove,
+                                          )));
+                              // itemToMoveAndCopy=[];
+                              // _refreshVaultPage();
+                            }
+                          } else {
+                            debugPrint(
+                                'On Tap Adding Selected Items..........');
+                            selectedView(entity);
                           }
-                        } else {
+                        },
+                        onLongPress: () {
                           debugPrint('On Tap Adding Selected Items..........');
                           selectedView(entity);
-                        }
-                      },
-                      onLongPress: () {
-                        debugPrint('On Tap Adding Selected Items..........');
-                        selectedView(entity);
-                      }),
-                );
-              },
-            ),
-          ),
-          if (selectedItems.isNotEmpty)
-            Container(
-              height: 55,
-              color: Colors.white,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: IconButton(
-                      icon: const Icon(Icons.file_copy_outlined),
-                      onPressed: () {
-                        setState(() {
-                          itemToMoveAndCopy = selectedItems;
-                          selectedItems = [];
-                          copyOrMove = "copy";
-                          debugPrint("Copying.........$copyOrMove....");
-                        });
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: IconButton(
-                      icon: const Icon(Icons.cut),
-                      onPressed: () {
-                        itemToMoveAndCopy = selectedItems;
-                        setState(() {
-                          selectedItems = [];
-                        });
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: () {
-                        setState(() {
-                          selectedItems = [];
-                        });
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () {
-                        setState(() {
-                          itemToMoveAndCopy = selectedItems;
-                          selectedItems = [];
-                        });
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        setState(() {
-                          selectedItems = [];
-                        });
-                      },
-                    ),
-                  ),
-                ],
+                        }),
+                  );
+                },
               ),
             ),
-          if (itemToMoveAndCopy.isNotEmpty)
-            Container(
+            if (selectedItems.isNotEmpty)
+              Container(
                 height: 55,
                 color: Colors.white,
                 child: Row(
                   children: [
                     Expanded(
                       child: IconButton(
-                        icon: const Icon(Icons.clear),
+                        icon: const Icon(Icons.file_copy_outlined),
                         onPressed: () {
                           setState(() {
-                            widget.itemToMoveAndCopy = [];
-                            itemToMoveAndCopy = [];
+                            itemToMoveAndCopy = selectedItems;
                             selectedItems = [];
-                            _refreshVaultPage();
+                            copyOrMove = "copy";
+                            debugPrint("Copying.........$copyOrMove....");
                           });
                         },
                       ),
                     ),
                     Expanded(
                       child: IconButton(
-                        icon: const Icon(Icons.check),
+                        icon: const Icon(Icons.cut),
+                        onPressed: () {
+                          itemToMoveAndCopy = selectedItems;
+                          setState(() {
+                            selectedItems = [];
+                          });
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: IconButton(
+                        icon: const Icon(Icons.edit),
                         onPressed: () {
                           setState(() {
-                            debugPrint('copyOrMove string: $copyOrMove');
-                            if (copyOrMove == "copy") copyItems();
-                            itemToMoveAndCopy = [];
-                            widget.itemToMoveAndCopy = [];
-                            copyOrMove = "";
-                            widget.copyOrMove = "";
-                            _refreshVaultPage();
-
-                            // if (copyOrMove == "move") moveItems();
+                            selectedItems = [];
+                          });
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () {
+                          setState(() {
+                            itemToMoveAndCopy = selectedItems;
+                            selectedItems = [];
+                          });
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          setState(() {
+                            selectedItems = [];
                           });
                         },
                       ),
                     ),
                   ],
-                ))
-        ],
+                ),
+              ),
+            if (itemToMoveAndCopy.isNotEmpty)
+              Container(
+                  height: 55,
+                  color: Colors.white,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
+                            setState(() {
+                              widget.itemToMoveAndCopy = [];
+                              itemToMoveAndCopy = [];
+                              selectedItems = [];
+                              _refreshVaultPage();
+                            });
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: IconButton(
+                          icon: const Icon(Icons.check),
+                          onPressed: () {
+                            setState(() {
+                              debugPrint('copyOrMove string: $copyOrMove');
+                              if (copyOrMove == "copy") copyItems();
+                              itemToMoveAndCopy = [];
+                              widget.itemToMoveAndCopy = [];
+                              copyOrMove = "";
+                              widget.copyOrMove = "";
+                              // movedOrCopied();
+                              _refreshVaultPage();
+
+                              // if (copyOrMove == "move") moveItems();
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ))
+          ],
+        ),
       ),
       floatingActionButton: Container(
         margin: ((selectedItems.isEmpty && itemToMoveAndCopy.isEmpty)
