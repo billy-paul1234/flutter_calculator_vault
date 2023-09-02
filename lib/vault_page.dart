@@ -66,7 +66,8 @@ class _VaultPageState extends State<VaultPage> {
     } else if (widget.copyOrMove == 'move' || copyOrMove == 'move') {
       copyOrMove = 'move';
     } else if (copyOrMove == 'rename') {
-      copyOrMove = 'rename';
+      copyOrMove = '';
+      refreshVaultPage = true;
     } else if (copyOrMove == 'delete') {
       copyOrMove = 'delete';
     } else {
@@ -296,7 +297,22 @@ class _VaultPageState extends State<VaultPage> {
                         icon: const Icon(Icons.edit),
                         onPressed: () {
                           setState(() {
+                            itemToMoveAndCopy = selectedItems;
                             selectedItems = [];
+                            copyOrMove = "rename";
+                            // Rename
+                            if (copyOrMove == "rename") {
+                              for (FileSystemEntity entity
+                                  in itemToMoveAndCopy) {
+                                _popUpInput(context, "Rename", entity.path);
+                              }
+                              setState(() {
+                                refreshVaultPage = true;
+                              });
+                            }
+                            itemToMoveAndCopy = [];
+                            debugPrint("Renameing.........$copyOrMove....");
+                            refreshVaultPage = true;
                           });
                         },
                       ),
@@ -352,6 +368,7 @@ class _VaultPageState extends State<VaultPage> {
                           onPressed: () {
                             setState(() {
                               debugPrint('copyOrMove string: $copyOrMove');
+                              // copy
                               if (copyOrMove == "copy") {
                                 for (FileSystemEntity entity
                                     in itemToMoveAndCopy) {
@@ -362,6 +379,7 @@ class _VaultPageState extends State<VaultPage> {
                                   copyItems(key, value);
                                 });
                               }
+                              // Move
                               if (copyOrMove == "move") {
                                 for (FileSystemEntity entity
                                     in itemToMoveAndCopy) {
@@ -376,12 +394,23 @@ class _VaultPageState extends State<VaultPage> {
                                   deleteItems(entity.path);
                                 }
                               }
+
+                              // // Rename
+                              // if (copyOrMove == "rename") {
+                              //   for (FileSystemEntity entity
+                              //       in itemToMoveAndCopy) {
+                              //     _popUpInput(context, "Rename", entity.path);
+                              //   }
+                              // }
+
+                              // delete
                               if (copyOrMove == "delete") {
                                 for (FileSystemEntity entity
                                     in itemToMoveAndCopy) {
                                   deleteItems(entity.path);
                                 }
                               }
+
                               itemToMoveAndCopy = [];
                               widget.itemToMoveAndCopy = [];
                               copyOrMove = "";
@@ -437,17 +466,47 @@ class _VaultPageState extends State<VaultPage> {
     );
   } // @overide Build()
 
+  renameItems(String current, String renameto) {
+    debugPrint('File renamed successfully.');
+    if (File(current).existsSync()) {
+      renameto = '$renameto${path.extension(current)}';
+      if (!File('${widget.setdir}/$renameto').existsSync()) {
+        // Rename the file
+        File(current).renameSync('${widget.setdir}/$renameto');
+        Directory directory = Directory(widget.setdir);
+        _filesAndFolders = directory.listSync();
+
+        debugPrint('File renamed successfully.');
+        // _loadFilesAndFolders();
+        // _refreshVaultPage();
+      }
+    } else if (Directory(current).existsSync()) {
+      if (!Directory('${widget.setdir}/$renameto').existsSync()) {
+        // Rename the folder
+        Directory(current).renameSync('${widget.setdir}/$renameto');
+        Directory directory = Directory(widget.setdir);
+        setState(() {
+          _filesAndFolders = directory.listSync();
+        });
+        debugPrint('Folder renamed successfully.');
+        // _loadFilesAndFolders();
+        // _refreshVaultPage();
+      }
+    }
+    debugPrint('Folder renamed successfully.');
+  }
+
   void deleteItems(String path) {
     final file = File(path);
     if (file.existsSync()) {
       try {
         file.deleteSync();
-        print('File deleted successfully.');
+        debugPrint('File deleted successfully.');
       } catch (e) {
-        print('Error deleting file: $e');
+        debugPrint('Error deleting file: $e');
       }
     } else {
-      print('File does not exist.');
+      debugPrint('File does not exist.');
     }
 
     final directory = Directory(path);
@@ -455,12 +514,12 @@ class _VaultPageState extends State<VaultPage> {
     if (directory.existsSync()) {
       try {
         directory.deleteSync(recursive: true);
-        print('Directory deleted successfully.');
+        debugPrint('Directory deleted successfully.');
       } catch (e) {
-        print('Error deleting directory: $e');
+        debugPrint('Error deleting directory: $e');
       }
     } else {
-      print('Directory does not exist.');
+      debugPrint('Directory does not exist.');
     }
   }
 
@@ -570,7 +629,7 @@ class _VaultPageState extends State<VaultPage> {
     }
   }
 
-  void _popUpInput(BuildContext context, String txt) {
+  void _popUpInput(BuildContext context, String txt, [String? current]) {
     TextEditingController textEditingController2 = TextEditingController();
     final textFieldBorder = OutlineInputBorder(
       borderSide: const BorderSide(
@@ -601,6 +660,8 @@ class _VaultPageState extends State<VaultPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        String create = 'Create';
+        create = (txt == 'Rename' ? "Rename" : "Create");
         return AlertDialog(
           backgroundColor: Color.fromARGB(255, 198, 195, 195),
           contentTextStyle: const TextStyle(
@@ -688,12 +749,28 @@ class _VaultPageState extends State<VaultPage> {
                               if (txt == "Create File") {
                                 createFile(inputFileFolder);
                               }
+                              if (txt == "Rename") {
+                                renameItems(current!, inputFileFolder);
+                                Directory directory = Directory(widget.setdir);
+                                  _filesAndFolders = directory.listSync();
+                                Navigator.pop(context);
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => VaultPage(
+                                              setdir: widget.setdir,
+                                              title: 'Vault Page',
+                                              itemToMoveAndCopy:
+                                                  itemToMoveAndCopy,
+                                              copyOrMove: copyOrMove,
+                                            )));
+                              }
                               Navigator.pop(context);
                             });
                           },
-                          child: const Text(
-                            "Create",
-                            style: TextStyle(
+                          child: Text(
+                            create,
+                            style: const TextStyle(
                                 fontSize: 20,
                                 color: Color.fromARGB(255, 245, 241, 241)),
                           )),
