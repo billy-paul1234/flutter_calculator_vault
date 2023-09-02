@@ -1422,3 +1422,61 @@
 //   print('Parent Directory B: $parentDirectoryPathB');
 // }
 
+
+
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Back Button Handling',
+      home: HomePage(),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Back Button Handling'),
+      ),
+      body: WillPopScope(
+        onWillPop: () async {
+          // Execute your custom code here
+          // For example, show a confirmation dialog
+          bool shouldPop = await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('Exit App?'),
+              content: Text('Are you sure you want to exit?'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text('No'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: Text('Yes'),
+                ),
+              ],
+            ),
+          );
+
+          return shouldPop;
+        },
+        child: Center(
+          child: Text('Press the Android back button'),
+        ),
+      ),
+    );
+  }
+}
+
+

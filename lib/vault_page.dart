@@ -145,17 +145,36 @@ class _VaultPageState extends State<VaultPage> {
       body: WillPopScope(
         onWillPop: () async {
           appStorage = await getApplicationDocumentsDirectory();
-          String parentDirectory='${appStorage.path}/MySecretFolder';
-          if(currentDirectory.split('/').last != 'MySecretFolder') {
+          String parentDirectory = '${appStorage.path}/MySecretFolder';
+          if (currentDirectory != '${appStorage.path}/MySecretFolder') {
             parentDirectory = path.dirname(currentDirectory);
+          } else {
+            // Program to exit app
+            // ignore: unused_local_variable, use_build_context_synchronously
+            bool shouldPop = await showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Exit App?'),
+                content: const Text('Are you sure you want to exit?'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: const Text('No'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: const Text('Yes'),
+                  ),
+                ],
+              ),
+            );
           }
-          
-          debugPrint(
-              'appStorage.path: ${appStorage.path}/MySecretFolder !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-          debugPrint(
-              'currentDirectory:  ${currentDirectory.split('/').last} !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-          debugPrint(
-              'parentDirectory:  $parentDirectory !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+          // debugPrint(
+          //     'appStorage.path: ${appStorage.path}/MySecretFolder !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+          // debugPrint(
+          //     'currentDirectory:  ${currentDirectory.split('/').last} !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+          // debugPrint(
+          //     'parentDirectory:  $parentDirectory !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
           // ignore: use_build_context_synchronously
           Navigator.push(
               context,
@@ -385,15 +404,42 @@ class _VaultPageState extends State<VaultPage> {
   } // @overide Build()
 
   void copyItems() {
-    for (final itemPath in itemToMoveAndCopy) {
-      final item = File(itemPath.path);
-      if (item.existsSync()) {
-        final destinationPath = '$currentDirectory/${item.uri.pathSegments.last}';
-        item.copySync(destinationPath);
-        debugPrint('Copied: ${itemPath.path} to $destinationPath');
-      } else {
-        debugPrint('File/Folder does not exist: ${itemPath.path}');
+    void copyDirectory(String sourcePath, String destinationPath) {
+      final sourceDirectory = Directory(sourcePath);
+      final destinationDirectory = Directory(destinationPath);
+      if (!sourceDirectory.existsSync()) {
+        throw const FileSystemException('Source directory does not exist.');
       }
+
+      if (!destinationDirectory.existsSync()) {
+        destinationDirectory.createSync(recursive: true);
+      }
+
+      for (var entity in sourceDirectory.listSync()) {
+        final newPath = File(
+            '${destinationDirectory.path}/${entity.uri.pathSegments.last}');
+        if (entity is Directory) {
+          debugPrint('Newpath: ${newPath.path}');
+          copyDirectory(entity.path, '${newPath.path}/${entity.path.split('/').last}');
+          // copyDirectory(entity.path, newPath.path);
+        } else if (entity is File) {
+          entity.copySync(newPath.path);
+        }
+      }
+    }
+
+    for (FileSystemEntity itemPath in itemToMoveAndCopy) {
+      final item = File(itemPath.path);
+      final destinationPath = '$currentDirectory/${item.uri.pathSegments.last}';
+      if (itemPath is File) {
+        if (item.existsSync()) {
+          item.copySync(destinationPath);
+          debugPrint('Copied: ${itemPath.path} to $destinationPath');
+        } else {
+          debugPrint('File/Folder does not exist: ${itemPath.path}');
+        }
+      }
+      if (itemPath is Directory) copyDirectory(itemPath.path, destinationPath);
     }
   }
 
@@ -675,7 +721,7 @@ class _VaultPageState extends State<VaultPage> {
   selectedColor(String path) {
     for (FileSystemEntity item in selectedItems) {
       if (path == item.path) {
-        return Colors.blue;
+        return const Color.fromARGB(255, 151, 191, 136);
         break; // Exit the loop when the string is found
       }
     }
