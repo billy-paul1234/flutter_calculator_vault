@@ -1,3 +1,6 @@
+// ignore: duplicate_ignore
+// ignore_for_file: unused_import, unnecessary_import
+
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
@@ -47,18 +50,7 @@ class _VaultPageState extends State<VaultPage> {
   List<FileSystemEntity> itemToMoveAndCopy = [];
   String currentDirectory = '';
   String copyOrMove = "";
-  // bool _isMovedOrCopied = true;
-  // isMovedOrCopied() async {
-  //   WidgetsFlutterBinding.ensureInitialized();
-  //   final prefs = await SharedPreferences.getInstance();
-  //   bool ismovedOrCopied = prefs.getBool('movedOrCopied') ?? false;
-  //   return ismovedOrCopied;
-  // }
-
-  // Future<void> movedOrCopied() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   await prefs.setBool('movedOrCopied', true);
-  // }
+  Map<String, dynamic> sourceAndDestination = {};
 
   @override
   void initState() {
@@ -68,17 +60,22 @@ class _VaultPageState extends State<VaultPage> {
 
   @override
   Widget build(BuildContext context) {
-    // var tmp = isMovedOrCopied();
-    // if (_isMovedOrCopied && tmp) {
-    //   _isMovedOrCopied = false;
-    //   _refreshVaultPage();
-    // }
-
     currentDirectory = widget.setdir;
-    copyOrMove =
-        ((widget.copyOrMove == 'copy' || copyOrMove == 'copy') ? 'copy' : "");
-    if (widget.itemToMoveAndCopy.isNotEmpty)
+    if (widget.copyOrMove == 'copy' || copyOrMove == 'copy') {
+      copyOrMove = 'copy';
+    } else if (widget.copyOrMove == 'move' || copyOrMove == 'move') {
+      copyOrMove = 'move';
+    } else if (copyOrMove == 'rename') {
+      copyOrMove = 'rename';
+    } else if (copyOrMove == 'delete') {
+      copyOrMove = 'delete';
+    } else {
+      copyOrMove = '';
+    }
+
+    if (widget.itemToMoveAndCopy.isNotEmpty) {
       itemToMoveAndCopy = widget.itemToMoveAndCopy;
+    }
     // if (widget.copyOrMove != null && widget.copyOrMove!.isNotEmpty) {
     //   copyOrMove = widget.copyOrMove!;
     // }
@@ -102,9 +99,12 @@ class _VaultPageState extends State<VaultPage> {
     debugPrint('copyOrMove bool: $copyOrMove');
 
     // if (selectedItems.isNotEmpty)
-    for (var i in selectedItems) debugPrint('Selected items: ${i.path}');
-    for (var i in itemToMoveAndCopy)
+    for (var i in selectedItems) {
+      debugPrint('Selected items: ${i.path}');
+    }
+    for (var i in itemToMoveAndCopy) {
       debugPrint('itemsToMoveAndCopy: ${i.path}');
+    }
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 97, 96, 96),
@@ -201,7 +201,7 @@ class _VaultPageState extends State<VaultPage> {
                   return Container(
                     margin: const EdgeInsets.fromLTRB(1, 1, 1, 1),
                     color: (selectedItems.isEmpty
-                        ? Color.fromARGB(255, 223, 218, 218)
+                        ? const Color.fromARGB(255, 223, 218, 218)
                         : selectedColor(entity.path)),
                     child: ListTile(
                         horizontalTitleGap: 0,
@@ -209,13 +209,13 @@ class _VaultPageState extends State<VaultPage> {
                         leading: Icon(
                             entity is File ? Icons.file_open : Icons.folder),
                         iconColor: (entity is File
-                            ? Color.fromARGB(255, 119, 100, 25)
-                            : Color.fromARGB(255, 239, 156, 48)),
+                            ? const Color.fromARGB(255, 119, 100, 25)
+                            : const Color.fromARGB(255, 239, 156, 48)),
                         subtitle: Text(
                           (entity is File
                               ? fileSize(entity.path)
                               : itemsInFolder(entity.path)),
-                          style: TextStyle(color: Colors.black),
+                          style: const TextStyle(color: Colors.black),
                         ),
                         title: Text(
                           entity.path.split('/').last,
@@ -261,7 +261,7 @@ class _VaultPageState extends State<VaultPage> {
             if (selectedItems.isNotEmpty)
               Container(
                 height: 55,
-                color: Color.fromARGB(255, 145, 144, 144),
+                color: const Color.fromARGB(255, 145, 144, 144),
                 child: Row(
                   children: [
                     Expanded(
@@ -283,7 +283,10 @@ class _VaultPageState extends State<VaultPage> {
                         onPressed: () {
                           itemToMoveAndCopy = selectedItems;
                           setState(() {
+                            itemToMoveAndCopy = selectedItems;
                             selectedItems = [];
+                            copyOrMove = "move";
+                            debugPrint("Moveing.........$copyOrMove....");
                           });
                         },
                       ),
@@ -305,6 +308,8 @@ class _VaultPageState extends State<VaultPage> {
                           setState(() {
                             itemToMoveAndCopy = selectedItems;
                             selectedItems = [];
+                            copyOrMove = "delete";
+                            debugPrint("Deleteing.........$copyOrMove....");
                           });
                         },
                       ),
@@ -325,7 +330,7 @@ class _VaultPageState extends State<VaultPage> {
             if (itemToMoveAndCopy.isNotEmpty)
               Container(
                   height: 55,
-                  color: Color.fromARGB(255, 145, 144, 144),
+                  color: const Color.fromARGB(255, 145, 144, 144),
                   child: Row(
                     children: [
                       Expanded(
@@ -350,17 +355,38 @@ class _VaultPageState extends State<VaultPage> {
                               if (copyOrMove == "copy") {
                                 for (FileSystemEntity entity
                                     in itemToMoveAndCopy) {
-                                  copyItems(entity.path, currentDirectory);
+                                  copySourceAndDestination(
+                                      entity.path, currentDirectory);
+                                }
+                                sourceAndDestination.forEach((key, value) {
+                                  copyItems(key, value);
+                                });
+                              }
+                              if (copyOrMove == "move") {
+                                for (FileSystemEntity entity
+                                    in itemToMoveAndCopy) {
+                                  copySourceAndDestination(
+                                      entity.path, currentDirectory);
+                                }
+                                sourceAndDestination.forEach((key, value) {
+                                  copyItems(key, value);
+                                });
+                                for (FileSystemEntity entity
+                                    in itemToMoveAndCopy) {
+                                  deleteItems(entity.path);
+                                }
+                              }
+                              if (copyOrMove == "delete") {
+                                for (FileSystemEntity entity
+                                    in itemToMoveAndCopy) {
+                                  deleteItems(entity.path);
                                 }
                               }
                               itemToMoveAndCopy = [];
                               widget.itemToMoveAndCopy = [];
                               copyOrMove = "";
                               widget.copyOrMove = "";
-                              // movedOrCopied();
                               _refreshVaultPage();
-
-                              // if (copyOrMove == "move") moveItems();
                             });
                           },
                         ),
@@ -411,49 +437,70 @@ class _VaultPageState extends State<VaultPage> {
     );
   } // @overide Build()
 
-  void copyItems(String sourcePath, String destinationPath) {
-
-    // ignore: unused_element
-    Future<void> createFolder(String? inputFileFolder , String destinationPath )async {
-      final Directory newDirectory =
-          Directory("$destinationPath/$inputFileFolder");
-
-      debugPrint("Folder creat check: $destinationPath/$inputFileFolder");
-      // ignore: use_build_context_synchronousl
-
-        newDirectory.createSync();
-        _refreshVaultPage();
-        debugPrint('Directory created successfully.');
-      
+  void deleteItems(String path) {
+    final file = File(path);
+    if (file.existsSync()) {
+      try {
+        file.deleteSync();
+        print('File deleted successfully.');
+      } catch (e) {
+        print('Error deleting file: $e');
+      }
+    } else {
+      print('File does not exist.');
     }
 
+    final directory = Directory(path);
 
+    if (directory.existsSync()) {
+      try {
+        directory.deleteSync(recursive: true);
+        print('Directory deleted successfully.');
+      } catch (e) {
+        print('Error deleting directory: $e');
+      }
+    } else {
+      print('Directory does not exist.');
+    }
+  }
 
-    // ignore: unused_local_variable
-    final sourceDirectory = Directory(sourcePath);
+  void copySourceAndDestination(String sourcePath, String destinationPath) {
     final sourceFile = File(sourcePath);
-    // ignore: unused_local_variable
-    final destinationDirectory = Directory(destinationPath);
 
     if (File(sourcePath).existsSync()) {
       if (!File('$destinationPath/${sourceFile.uri.pathSegments.last}')
           .existsSync()) {
-        sourceFile
-            .copySync('$destinationPath/${sourceFile.uri.pathSegments.last}');
-        debugPrint(
-            '$sourcePath is copyed to $destinationPath/${sourceFile.uri.pathSegments.last}.');
+        sourceAndDestination[sourcePath] =
+            '$destinationPath/${sourceFile.uri.pathSegments.last}';
       }
     } else if (Directory(sourcePath).existsSync()) {
-      if (!Directory('$destinationPath/${sourceFile.uri.pathSegments.last}').existsSync()) createFolder(sourceFile.uri.pathSegments.last,destinationPath);
-           
-    final entities = Directory(sourcePath).listSync();
+      if (!Directory('$destinationPath/${sourceFile.path.split('/').last}')
+          .existsSync()) {
+        sourceAndDestination[sourcePath] =
+            '$destinationPath/${sourceFile.uri.pathSegments.last}';
+      }
 
-    for (var entity in entities) {
-        copyItems(entity.path, '$destinationPath/${sourceFile.uri.pathSegments.last}');
-    }
+      final entities = Directory(sourcePath).listSync();
+      if (entities.isNotEmpty) {
+        for (var entity in entities) {
+          copySourceAndDestination(entity.path,
+              '$destinationPath/${sourceFile.uri.pathSegments.last}');
+        }
+      }
       debugPrint('$sourcePath is a directory.');
     }
+  }
 
+  void copyItems(String sourcePath, String destinationPath) {
+    if (File(sourcePath).existsSync()) {
+      if (!File(destinationPath).existsSync()) {
+        File(sourcePath).copySync(destinationPath);
+      }
+    } else if (Directory(sourcePath).existsSync()) {
+      if (!Directory(destinationPath).existsSync()) {
+        Directory(destinationPath).createSync();
+      }
+    }
   }
 
   void _handleFileTap(File file) {
@@ -527,7 +574,7 @@ class _VaultPageState extends State<VaultPage> {
     TextEditingController textEditingController2 = TextEditingController();
     final textFieldBorder = OutlineInputBorder(
       borderSide: const BorderSide(
-        color: Color.fromARGB(255, 44, 44, 44),
+        color: Color.fromARGB(255, 0, 0, 0),
         width: 3,
         style: BorderStyle.solid,
       ),
@@ -537,8 +584,8 @@ class _VaultPageState extends State<VaultPage> {
       borderRadius: BorderRadius.circular(8),
       gradient: const LinearGradient(
         colors: [
-          Color.fromARGB(255, 112, 113, 112),
-          Color.fromARGB(255, 63, 65, 63)
+          Color.fromARGB(255, 169, 174, 169),
+          Color.fromARGB(255, 106, 112, 106)
         ],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
@@ -555,7 +602,7 @@ class _VaultPageState extends State<VaultPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: const Color.fromARGB(255, 97, 96, 96),
+          backgroundColor: Color.fromARGB(255, 198, 195, 195),
           contentTextStyle: const TextStyle(
             color: Colors.black,
           ),
