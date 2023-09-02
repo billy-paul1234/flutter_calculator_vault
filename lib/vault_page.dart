@@ -261,7 +261,7 @@ class _VaultPageState extends State<VaultPage> {
             if (selectedItems.isNotEmpty)
               Container(
                 height: 55,
-                color: Colors.white,
+                color: Color.fromARGB(255, 145, 144, 144),
                 child: Row(
                   children: [
                     Expanded(
@@ -325,7 +325,7 @@ class _VaultPageState extends State<VaultPage> {
             if (itemToMoveAndCopy.isNotEmpty)
               Container(
                   height: 55,
-                  color: Colors.white,
+                  color: Color.fromARGB(255, 145, 144, 144),
                   child: Row(
                     children: [
                       Expanded(
@@ -347,7 +347,12 @@ class _VaultPageState extends State<VaultPage> {
                           onPressed: () {
                             setState(() {
                               debugPrint('copyOrMove string: $copyOrMove');
-                              if (copyOrMove == "copy") copyItems();
+                              if (copyOrMove == "copy") {
+                                for (FileSystemEntity entity
+                                    in itemToMoveAndCopy) {
+                                  copyItems(entity.path, currentDirectory);
+                                }
+                              }
                               itemToMoveAndCopy = [];
                               widget.itemToMoveAndCopy = [];
                               copyOrMove = "";
@@ -406,44 +411,49 @@ class _VaultPageState extends State<VaultPage> {
     );
   } // @overide Build()
 
-  void copyItems() {
-    void copyDirectory(String sourcePath, String destinationPath) {
-      final sourceDirectory = Directory(sourcePath);
-      final destinationDirectory = Directory(destinationPath);
-      if (!sourceDirectory.existsSync()) {
-        throw const FileSystemException('Source directory does not exist.');
-      }
+  void copyItems(String sourcePath, String destinationPath) {
 
-      if (!destinationDirectory.existsSync()) {
-        destinationDirectory.createSync(recursive: true);
-      }
+    // ignore: unused_element
+    Future<void> createFolder(String? inputFileFolder , String destinationPath )async {
+      final Directory newDirectory =
+          Directory("$destinationPath/$inputFileFolder");
 
-      for (var entity in sourceDirectory.listSync()) {
-        final newPath = File(
-            '${destinationDirectory.path}/${entity.uri.pathSegments.last}');
-        if (entity is Directory) {
-          debugPrint('Newpath: ${newPath.path}');
-          copyDirectory(entity.path, '${newPath.path}/${entity.path.split('/').last}');
-          // copyDirectory(entity.path, newPath.path);
-        } else if (entity is File) {
-          entity.copySync(newPath.path);
-        }
-      }
+      debugPrint("Folder creat check: $destinationPath/$inputFileFolder");
+      // ignore: use_build_context_synchronousl
+
+        newDirectory.createSync();
+        _refreshVaultPage();
+        debugPrint('Directory created successfully.');
+      
     }
 
-    for (FileSystemEntity itemPath in itemToMoveAndCopy) {
-      final item = File(itemPath.path);
-      final destinationPath = '$currentDirectory/${item.uri.pathSegments.last}';
-      if (itemPath is File) {
-        if (item.existsSync()) {
-          item.copySync(destinationPath);
-          debugPrint('Copied: ${itemPath.path} to $destinationPath');
-        } else {
-          debugPrint('File/Folder does not exist: ${itemPath.path}');
-        }
+
+
+    // ignore: unused_local_variable
+    final sourceDirectory = Directory(sourcePath);
+    final sourceFile = File(sourcePath);
+    // ignore: unused_local_variable
+    final destinationDirectory = Directory(destinationPath);
+
+    if (File(sourcePath).existsSync()) {
+      if (!File('$destinationPath/${sourceFile.uri.pathSegments.last}')
+          .existsSync()) {
+        sourceFile
+            .copySync('$destinationPath/${sourceFile.uri.pathSegments.last}');
+        debugPrint(
+            '$sourcePath is copyed to $destinationPath/${sourceFile.uri.pathSegments.last}.');
       }
-      if (itemPath is Directory) copyDirectory(itemPath.path, destinationPath);
+    } else if (Directory(sourcePath).existsSync()) {
+      if (!Directory('$destinationPath/${sourceFile.uri.pathSegments.last}').existsSync()) createFolder(sourceFile.uri.pathSegments.last,destinationPath);
+           
+    final entities = Directory(sourcePath).listSync();
+
+    for (var entity in entities) {
+        copyItems(entity.path, '$destinationPath/${sourceFile.uri.pathSegments.last}');
     }
+      debugPrint('$sourcePath is a directory.');
+    }
+
   }
 
   void _handleFileTap(File file) {
@@ -478,8 +488,6 @@ class _VaultPageState extends State<VaultPage> {
   }
 
   Future<void> createFolder([String? inputFileFolder]) async {
-    // var tmp = await _popUpInput(context, "Create Folder");
-    // appStorage = await getApplicationDocumentsDirectory();
     final Directory newDirectory =
         Directory("${widget.setdir}/$inputFileFolder");
 
