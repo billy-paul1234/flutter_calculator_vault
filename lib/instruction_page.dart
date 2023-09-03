@@ -23,7 +23,7 @@ class _InstructionPageState extends State<InstructionPage> {
   int _currentImage = 0;
   PageController _pageController = PageController(initialPage: 0);
   bool showPage2Content = false;
-    final List<String> imagetxt = [
+  final List<String> imagetxt = [
     "Set Your Password",
     "To open your Vault Long Press on 0",
     "Enter Your Password",
@@ -74,29 +74,41 @@ class _InstructionPageState extends State<InstructionPage> {
     super.dispose();
   }
 
-
   Future<void> _createSecretFolder() async {
     // var tmp = await _popUpInput(context, "Create Folder");
     var appStorage = await getApplicationDocumentsDirectory();
-    final Directory newDirectory =
+    final Directory mySecretFolder =
         Directory("${appStorage.path}/MySecretFolder");
+    final Directory documents =
+        Directory("${appStorage.path}/MySecretFolder/Documents");
+    final Directory images =
+        Directory("${appStorage.path}/MySecretFolder/Images");
+    final Directory videos =
+        Directory("${appStorage.path}/MySecretFolder/Videos");
 
     debugPrint("Folder creat check: ${appStorage.path}/MySecretFolder");
     // ignore: use_build_context_synchronousl
-    if (newDirectory.existsSync()) {
-      createSecretFolder=true;
+    if (mySecretFolder.existsSync() ||
+        documents.existsSync() ||
+        images.existsSync() ||
+        videos.existsSync()) {
+      createSecretFolder = true;
       debugPrint('Directory already exists.');
     } else {
-      newDirectory.createSync();
-      createSecretFolder=true;
+      mySecretFolder.createSync();
+      documents.createSync();
+      images.createSync();
+      videos.createSync();
+
+      createSecretFolder = true;
       debugPrint('Directory created successfully.');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if(!createSecretFolder)_createSecretFolder();
-  
+    if (!createSecretFolder) _createSecretFolder();
+
     // bool isFirstTime;
     if (showPage2Content) {
       return const SetPassword(title: 'Set Password');
