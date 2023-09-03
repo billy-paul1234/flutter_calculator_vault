@@ -99,13 +99,13 @@ class _VaultPageState extends State<VaultPage> {
     debugPrint('widget.copyOrMove bool: ${widget.copyOrMove}');
     debugPrint('copyOrMove bool: $copyOrMove');
 
-    // if (selectedItems.isNotEmpty)
-    for (var i in selectedItems) {
-      debugPrint('Selected items: ${i.path}');
-    }
-    for (var i in itemToMoveAndCopy) {
-      debugPrint('itemsToMoveAndCopy: ${i.path}');
-    }
+    // // if (selectedItems.isNotEmpty)
+    // for (var i in selectedItems) {
+    //   debugPrint('Selected items: ${i.path}');
+    // }
+    // for (var i in itemToMoveAndCopy) {
+    //   debugPrint('itemsToMoveAndCopy: ${i.path}');
+    // }
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 97, 96, 96),
@@ -194,69 +194,75 @@ class _VaultPageState extends State<VaultPage> {
         child: Column(
           children: [
             Expanded(
-              child: ListView.builder(
-                // padding: const EdgeInsets.all(5),
-                itemCount: _filesAndFolders.length,
-                itemBuilder: (BuildContext context, int index) {
-                  FileSystemEntity entity = _filesAndFolders[index];
-                  return Container(
-                    margin: const EdgeInsets.fromLTRB(1, 1, 1, 1),
-                    color: (selectedItems.isEmpty
-                        ? const Color.fromARGB(255, 223, 218, 218)
-                        : selectedColor(entity.path)),
-                    child: ListTile(
-                        horizontalTitleGap: 0,
-                        // title: Text(entity.path.split('/').last),
-                        leading: Icon(
-                            entity is File ? Icons.file_open : Icons.folder),
-                        iconColor: (entity is File
-                            ? const Color.fromARGB(255, 119, 100, 25)
-                            : const Color.fromARGB(255, 239, 156, 48)),
-                        subtitle: Text(
-                          (entity is File
-                              ? fileSize(entity.path)
-                              : itemsInFolder(entity.path)),
-                          style: const TextStyle(color: Colors.black),
-                        ),
-                        title: Text(
-                          entity.path.split('/').last,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            color: Colors.black,
+              child: RefreshIndicator(
+                onRefresh: _refresh,
+                child: ListView.builder(
+                  // padding: const EdgeInsets.all(5),
+
+                  itemCount: _filesAndFolders.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    FileSystemEntity entity = _filesAndFolders[index];
+                    return Container(
+                      margin: const EdgeInsets.fromLTRB(1, 1, 1, 1),
+                      color: (selectedItems.isEmpty
+                          ? (!blockFolderForMove(entity.path) ? Color.fromARGB(255, 162, 159, 159) : Color.fromARGB(255, 255, 255, 255))
+                          : selectedColor(entity.path)),
+                      child: ListTile(
+                          horizontalTitleGap: 0,
+                          // title: Text(entity.path.split('/').last),
+                          leading: Icon(
+                              entity is File ? Icons.file_open : Icons.folder),
+                          iconColor: (entity is File
+                              ? const Color.fromARGB(255, 119, 100, 25)
+                              : const Color.fromARGB(255, 239, 156, 48)),
+                          subtitle: Text(
+                            (entity is File
+                                ? fileSize(entity.path)
+                                : itemsInFolder(entity.path)),
+                            style: const TextStyle(color: Colors.black),
                           ),
-                        ),
-                        onTap: () {
-                          // ignore: curly_braces_in_flow_control_structures
-                          if (selectedItems.isEmpty) {
-                            if (entity is File) {
-                              _handleFileTap(entity);
-                            } else if (entity is Directory) {
-                              _loadFilesAndFolders();
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => VaultPage(
-                                            setdir: entity.path,
-                                            title: 'Vault Page',
-                                            itemToMoveAndCopy:
-                                                itemToMoveAndCopy,
-                                            copyOrMove: copyOrMove,
-                                          )));
-                              // itemToMoveAndCopy=[];
-                              // _refreshVaultPage();
+                          title: Text(
+                            entity.path.split('/').last,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
+                            ),
+                          ),
+                          onTap: () {
+                            // ignore: curly_braces_in_flow_control_structures
+                            if (selectedItems.isEmpty) {
+                              if (entity is File) {
+                                _handleFileTap(entity);
+                              } else if (entity is Directory &&
+                                  blockFolderForMove(entity.path)) {
+                                _loadFilesAndFolders();
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => VaultPage(
+                                              setdir: entity.path,
+                                              title: 'Vault Page',
+                                              itemToMoveAndCopy:
+                                                  itemToMoveAndCopy,
+                                              copyOrMove: copyOrMove,
+                                            )));
+                                // itemToMoveAndCopy=[];
+                                // _refreshVaultPage();
+                              }
+                            } else {
+                              debugPrint(
+                                  'On Tap Adding Selected Items..........');
+                              selectedView(entity);
                             }
-                          } else {
+                          },
+                          onLongPress: () {
                             debugPrint(
                                 'On Tap Adding Selected Items..........');
                             selectedView(entity);
-                          }
-                        },
-                        onLongPress: () {
-                          debugPrint('On Tap Adding Selected Items..........');
-                          selectedView(entity);
-                        }),
-                  );
-                },
+                          }),
+                    );
+                  },
+                ),
               ),
             ),
             if (selectedItems.isNotEmpty)
@@ -288,6 +294,7 @@ class _VaultPageState extends State<VaultPage> {
                             selectedItems = [];
                             copyOrMove = "move";
                             debugPrint("Moveing.........$copyOrMove....");
+                            _refresh();
                           });
                         },
                       ),
@@ -306,13 +313,9 @@ class _VaultPageState extends State<VaultPage> {
                                   in itemToMoveAndCopy) {
                                 _popUpInput(context, "Rename", entity.path);
                               }
-                              setState(() {
-                                refreshVaultPage = true;
-                              });
                             }
                             itemToMoveAndCopy = [];
                             debugPrint("Renameing.........$copyOrMove....");
-                            refreshVaultPage = true;
                           });
                         },
                       ),
@@ -467,33 +470,24 @@ class _VaultPageState extends State<VaultPage> {
   } // @overide Build()
 
   renameItems(String current, String renameto) {
-    debugPrint('File renamed successfully.');
     if (File(current).existsSync()) {
       renameto = '$renameto${path.extension(current)}';
       if (!File('${widget.setdir}/$renameto').existsSync()) {
         // Rename the file
         File(current).renameSync('${widget.setdir}/$renameto');
-        Directory directory = Directory(widget.setdir);
-        _filesAndFolders = directory.listSync();
-
+        Navigator.pop(context);
+        _refresh();
         debugPrint('File renamed successfully.');
-        // _loadFilesAndFolders();
-        // _refreshVaultPage();
       }
     } else if (Directory(current).existsSync()) {
       if (!Directory('${widget.setdir}/$renameto').existsSync()) {
         // Rename the folder
         Directory(current).renameSync('${widget.setdir}/$renameto');
-        Directory directory = Directory(widget.setdir);
-        setState(() {
-          _filesAndFolders = directory.listSync();
-        });
+        Navigator.pop(context);
+        _refresh();
         debugPrint('Folder renamed successfully.');
-        // _loadFilesAndFolders();
-        // _refreshVaultPage();
       }
     }
-    debugPrint('Folder renamed successfully.');
   }
 
   void deleteItems(String path) {
@@ -639,31 +633,31 @@ class _VaultPageState extends State<VaultPage> {
       ),
       borderRadius: BorderRadius.circular(7),
     );
-    final threeDButton = BoxDecoration(
-      borderRadius: BorderRadius.circular(8),
-      gradient: const LinearGradient(
-        colors: [
-          Color.fromARGB(255, 169, 174, 169),
-          Color.fromARGB(255, 106, 112, 106)
-        ],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      ),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.3),
-          blurRadius: 5.0,
-          offset: const Offset(0, 3),
-        ),
-      ],
-    );
+    // final threeDButton = BoxDecoration(
+    //   borderRadius: BorderRadius.circular(8),
+    //   gradient: const LinearGradient(
+    //     colors: [
+    //       Color.fromARGB(255, 169, 174, 169),
+    //       Color.fromARGB(255, 106, 112, 106)
+    //     ],
+    //     begin: Alignment.topCenter,
+    //     end: Alignment.bottomCenter,
+    //   ),
+    //   boxShadow: [
+    //     BoxShadow(
+    //       color: Colors.black.withOpacity(0.3),
+    //       blurRadius: 5.0,
+    //       offset: const Offset(0, 3),
+    //     ),
+    //   ],
+    // );
     showDialog(
       context: context,
       builder: (BuildContext context) {
         String create = 'Create';
         create = (txt == 'Rename' ? "Rename" : "Create");
         return AlertDialog(
-          backgroundColor: Color.fromARGB(255, 198, 195, 195),
+          backgroundColor: Colors.white,
           contentTextStyle: const TextStyle(
             color: Colors.black,
           ),
@@ -678,30 +672,31 @@ class _VaultPageState extends State<VaultPage> {
                   children: [
                     Expanded(
                       child: Container(
-                        decoration: BoxDecoration(
-                          // border: ,
-                          color: const Color.fromARGB(255, 91, 126, 78),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        margin: const EdgeInsets.all(8),
-                        height: 75,
-                        width: 100,
-                        // width: 370,
+                        // decoration: BoxDecoration(
+                        //   // border: ,
+                        //   color: const Color.fromARGB(255, 91, 126, 78),
+                        //   borderRadius: BorderRadius.circular(5),
+                        // ),
+                        // margin: const EdgeInsets.all(8),
+                        // height: 75,
+                        // width: 100,
+                        // // width: 370,
                         child: TextField(
+                          autofocus: true,
                           textAlignVertical: TextAlignVertical.bottom,
                           style: const TextStyle(
                             color: Colors.black,
                             fontSize: 30,
                           ),
-                          decoration: InputDecoration(
-                            hintText: "Name",
-                            hintStyle: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 30,
-                            ),
-                            enabledBorder: textFieldBorder,
-                            focusedBorder: textFieldBorder,
-                          ),
+                          // decoration: InputDecoration(
+                          //   hintText: "Name",
+                          //   hintStyle: const TextStyle(
+                          //     color: Colors.black,
+                          //     fontSize: 30,
+                          //   ),
+                          //   enabledBorder: textFieldBorder,
+                          //   focusedBorder: textFieldBorder,
+                          // ),
                           controller: textEditingController2,
                           // textAlign: TextAlign.end,
                         ),
@@ -713,7 +708,7 @@ class _VaultPageState extends State<VaultPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                      decoration: threeDButton,
+                      // decoration: threeDButton,
                       margin: const EdgeInsets.only(top: 15),
                       child: TextButton(
                           style: const ButtonStyle(
@@ -727,13 +722,11 @@ class _VaultPageState extends State<VaultPage> {
                           },
                           child: const Text(
                             "Cancel",
-                            style: TextStyle(
-                                fontSize: 20,
-                                color: Color.fromARGB(255, 245, 241, 241)),
+                            style: TextStyle(fontSize: 20, color: Colors.black),
                           )),
                     ),
                     Container(
-                      decoration: threeDButton,
+                      // decoration: threeDButton,
                       margin: const EdgeInsets.only(top: 15),
                       child: TextButton(
                           style: const ButtonStyle(
@@ -745,34 +738,21 @@ class _VaultPageState extends State<VaultPage> {
                               var inputFileFolder = textEditingController2.text;
                               if (txt == "Create Folder") {
                                 createFolder(inputFileFolder);
+                                Navigator.pop(context);
                               }
                               if (txt == "Create File") {
                                 createFile(inputFileFolder);
+                                Navigator.pop(context);
                               }
                               if (txt == "Rename") {
                                 renameItems(current!, inputFileFolder);
-                                Directory directory = Directory(widget.setdir);
-                                  _filesAndFolders = directory.listSync();
-                                Navigator.pop(context);
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => VaultPage(
-                                              setdir: widget.setdir,
-                                              title: 'Vault Page',
-                                              itemToMoveAndCopy:
-                                                  itemToMoveAndCopy,
-                                              copyOrMove: copyOrMove,
-                                            )));
                               }
-                              Navigator.pop(context);
                             });
                           },
                           child: Text(
                             create,
                             style: const TextStyle(
-                                fontSize: 20,
-                                color: Color.fromARGB(255, 245, 241, 241)),
+                                fontSize: 20, color: Colors.black),
                           )),
                     ),
                   ],
@@ -860,5 +840,28 @@ class _VaultPageState extends State<VaultPage> {
         break; // Exit the loop when the string is found
       }
     }
+  }
+
+  Future<void> _refresh() async {
+    await Future.delayed(const Duration(seconds: 0));
+    // ignore: use_build_context_synchronously
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => VaultPage(
+                  setdir: widget.setdir,
+                  title: 'Vault Page',
+                  itemToMoveAndCopy: itemToMoveAndCopy,
+                  copyOrMove: copyOrMove,
+                )));
+  }
+
+  bool blockFolderForMove(String path) {
+    if(copyOrMove == 'move'){
+      for (var i in widget.itemToMoveAndCopy) {
+        if(i.path == path) return false;
+      }
+    }
+    return true;
   }
 }
