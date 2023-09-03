@@ -201,7 +201,21 @@ class _VaultPageState extends State<VaultPage> {
                 color: Colors.white,
                 height: 35,
                 child: Row(children: [
-                  IconButton(onPressed: () {}, icon: Icon(Icons.home_filled)),
+                  IconButton(
+                    color: Colors.black,
+                      onPressed: () async {
+                        appStorage = await getApplicationDocumentsDirectory();
+                        // ignore: use_build_context_synchronously
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => VaultPage(
+                                      title: 'Vault Opend',
+                                      setdir: '${appStorage.path}/MySecretFolder',
+                                      itemToMoveAndCopy: const [],
+                                    )));
+                      },
+                      icon: const Icon(Icons.home_filled)),
                   Expanded(
                     child: ListView.builder(
                         scrollDirection: Axis.horizontal,
@@ -212,12 +226,29 @@ class _VaultPageState extends State<VaultPage> {
                               (backPathHeader.indexOf('MySecretFolder') + 1)];
                           return TextButton(
                               style: TextButton.styleFrom(
-                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 0, 0, 0),
                                   backgroundColor:
-                                      Color.fromARGB(255, 255, 255, 255),
+                                      const Color.fromARGB(255, 255, 255, 255),
                                   foregroundColor: Colors.black,
-                                  minimumSize: Size(0, 0)),
-                              onPressed: () {},
+                                  minimumSize: const Size(0, 0)),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => VaultPage(
+                                              setdir: backPathHeader
+                                                  .sublist(
+                                                      0,
+                                                      (backPathHeader.indexOf(entity) +
+                                                          1))
+                                                  .join('/'),
+                                              title: 'Vault Page',
+                                              itemToMoveAndCopy:
+                                                  itemToMoveAndCopy,
+                                              copyOrMove: copyOrMove,
+                                            )));
+                              },
                               child: Text('$entity>'));
                         }),
                   ),
