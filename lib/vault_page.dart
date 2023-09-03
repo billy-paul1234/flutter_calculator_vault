@@ -205,7 +205,7 @@ class _VaultPageState extends State<VaultPage> {
                     return Container(
                       margin: const EdgeInsets.fromLTRB(1, 1, 1, 1),
                       color: (selectedItems.isEmpty
-                          ? (!blockFolderForMove(entity.path) ? Color.fromARGB(255, 162, 159, 159) : Color.fromARGB(255, 255, 255, 255))
+                          ? (!blockFolderForMove(entity.path) ? const Color.fromARGB(255, 162, 159, 159) : const Color.fromARGB(255, 255, 255, 255))
                           : selectedColor(entity.path)),
                       child: ListTile(
                           horizontalTitleGap: 0,
@@ -661,8 +661,13 @@ class _VaultPageState extends State<VaultPage> {
           contentTextStyle: const TextStyle(
             color: Colors.black,
           ),
-          title: Text(txt),
-          content: Container(
+          title: Text(
+            txt,
+            style: const TextStyle(
+              color: Colors.black,
+            ),
+            ),
+          content: SizedBox(
             width: 400,
             child: Column(
               mainAxisSize: MainAxisSize.min,
