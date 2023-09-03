@@ -921,3 +921,13 @@
 //     return true;
 //   }
 // }
+
+
+
+void main() {
+  List<String> backPathHeader = ['Hello', 'world', 'MySecretFolder', 'is', 'a', 'This'];
+
+  for (int i=backPathHeader.indexOf('MySecretFolder')+1; i<=backPathHeader.length ; i++){
+    print('/${backPathHeader.sublist(backPathHeader.indexOf('MySecretFolder'),i).join('/')}');
+  }
+}

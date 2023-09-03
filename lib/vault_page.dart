@@ -7,6 +7,7 @@ import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calculator_vault/calculator_page.dart';
+import 'package:flutter_calculator_vault/set_password.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path/path.dart' as path;
 // ignore: unused_import
@@ -52,6 +53,8 @@ class _VaultPageState extends State<VaultPage> {
   String currentDirectory = '';
   String copyOrMove = "";
   Map<String, dynamic> sourceAndDestination = {};
+  List<String> backPathHeader = [];
+  bool backPathHeaderbool = true;
 
   @override
   void initState() {
@@ -59,9 +62,24 @@ class _VaultPageState extends State<VaultPage> {
     _loadFilesAndFolders();
   }
 
+  _backPathHeader() async {
+    List<String> tmpList = path.split(widget.setdir);
+    // appStorage = await getApplicationDocumentsDirectory();
+    for (int i = tmpList.indexOf('MySecretFolder') + 2;
+        i <= tmpList.length;
+        i++) {
+      // debugPrint('/${tmpList.sublist(0, i).join('/')}');
+      backPathHeader
+          .add(tmpList.sublist(tmpList.indexOf('MySecretFolder'), i).join('/'));
+    }
+    backPathHeaderbool = false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<String> backPathHeader = path.split(widget.setdir);
+    if (backPathHeaderbool) _backPathHeader();
+    debugPrint('backPathHeader: $backPathHeader');
+
     currentDirectory = widget.setdir;
     if (widget.copyOrMove == 'copy' || copyOrMove == 'copy') {
       copyOrMove = 'copy';
@@ -108,6 +126,11 @@ class _VaultPageState extends State<VaultPage> {
     // for (var i in itemToMoveAndCopy) {
     //   debugPrint('itemsToMoveAndCopy: ${i.path}');
     // }
+    debugPrint('#####################################################');
+    debugPrint(itemsInFolder(widget.setdir).substring(0,1));
+    debugPrint(itemsInFolder(widget.setdir).substring(12,13));
+    debugPrint('#####################################################');
+
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 97, 96, 96),
@@ -128,7 +151,11 @@ class _VaultPageState extends State<VaultPage> {
                 ),
                 const PopupMenuItem<String>(
                   value: 'goToCalculator',
-                  child: Text('Calculator'),
+                  child: Text('Back to Calculator'),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'goToSetpassword',
+                  child: Text('Reset Password'),
                 ),
                 const PopupMenuDivider(),
                 const PopupMenuItem<String>(
@@ -192,7 +219,7 @@ class _VaultPageState extends State<VaultPage> {
                         copyOrMove: copyOrMove,
                       )));
           return true;
-        },
+          },
         child: RefreshIndicator(
           onRefresh: _refresh,
           child: Column(
@@ -202,7 +229,7 @@ class _VaultPageState extends State<VaultPage> {
                 height: 35,
                 child: Row(children: [
                   IconButton(
-                    color: Colors.black,
+                      color: Colors.black,
                       onPressed: () async {
                         appStorage = await getApplicationDocumentsDirectory();
                         // ignore: use_build_context_synchronously
@@ -211,19 +238,19 @@ class _VaultPageState extends State<VaultPage> {
                             MaterialPageRoute(
                                 builder: (context) => VaultPage(
                                       title: 'Vault Opend',
-                                      setdir: '${appStorage.path}/MySecretFolder',
-                                      itemToMoveAndCopy: const [],
+                                      setdir:
+                                          '${appStorage.path}/MySecretFolder',
+                                      itemToMoveAndCopy: itemToMoveAndCopy,
+                                      copyOrMove: copyOrMove,
                                     )));
                       },
                       icon: const Icon(Icons.home_filled)),
                   Expanded(
                     child: ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount: backPathHeader.length -
-                            (backPathHeader.indexOf('MySecretFolder') + 1),
+                        itemCount: backPathHeader.length,
                         itemBuilder: (BuildContext context, int index) {
-                          String entity = backPathHeader[index +
-                              (backPathHeader.indexOf('MySecretFolder') + 1)];
+                          String entity = backPathHeader[index];
                           return TextButton(
                               style: TextButton.styleFrom(
                                   padding:
@@ -232,24 +259,25 @@ class _VaultPageState extends State<VaultPage> {
                                       const Color.fromARGB(255, 255, 255, 255),
                                   foregroundColor: Colors.black,
                                   minimumSize: const Size(0, 0)),
-                              onPressed: () {
+                              onPressed: () async {
+                                appStorage =
+                                    await getApplicationDocumentsDirectory();
+                                debugPrint(
+                                    'OnPress change directory: ${appStorage.path}/$entity/');
+                                // ignore: use_build_context_synchronously
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => VaultPage(
-                                              setdir: backPathHeader
-                                                  .sublist(
-                                                      0,
-                                                      (backPathHeader.indexOf(entity) +
-                                                          1))
-                                                  .join('/'),
+                                              setdir:
+                                                  '${appStorage.path}/$entity/',
                                               title: 'Vault Page',
                                               itemToMoveAndCopy:
                                                   itemToMoveAndCopy,
                                               copyOrMove: copyOrMove,
                                             )));
                               },
-                              child: Text('$entity>'));
+                              child: Text('${entity.split('/').last}>'));
                         }),
                   ),
                 ]),
@@ -407,83 +435,94 @@ class _VaultPageState extends State<VaultPage> {
                 ),
               if (itemToMoveAndCopy.isNotEmpty)
                 Container(
-                    height: 55,
-                    color: const Color.fromARGB(255, 145, 144, 144),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: IconButton(
-                            icon: const Icon(Icons.clear),
-                            onPressed: () {
-                              setState(() {
-                                widget.itemToMoveAndCopy = [];
-                                itemToMoveAndCopy = [];
-                                selectedItems = [];
-                                _refreshVaultPage();
-                              });
-                            },
-                          ),
+                  height: 55,
+                  color: const Color.fromARGB(255, 145, 144, 144),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
+                            setState(() {
+                              widget.itemToMoveAndCopy = [];
+                              itemToMoveAndCopy = [];
+                              selectedItems = [];
+                              _refreshVaultPage();
+                            });
+                          },
                         ),
-                        Expanded(
-                          child: IconButton(
-                            icon: const Icon(Icons.check),
-                            onPressed: () {
-                              setState(() {
-                                debugPrint('copyOrMove string: $copyOrMove');
-                                // copy
-                                if (copyOrMove == "copy") {
-                                  for (FileSystemEntity entity
-                                      in itemToMoveAndCopy) {
-                                    copySourceAndDestination(
-                                        entity.path, currentDirectory);
-                                  }
-                                  sourceAndDestination.forEach((key, value) {
-                                    copyItems(key, value);
-                                  });
+                      ),
+                      Expanded(
+                        child: IconButton(
+                          icon: const Icon(Icons.check),
+                          onPressed: () {
+                            setState(() {
+                              debugPrint('copyOrMove string: $copyOrMove');
+                              // copy
+                              if (copyOrMove == "copy") {
+                                for (FileSystemEntity entity
+                                    in itemToMoveAndCopy) {
+                                  copySourceAndDestination(
+                                      entity.path, currentDirectory);
                                 }
-                                // Move
-                                if (copyOrMove == "move") {
-                                  for (FileSystemEntity entity
-                                      in itemToMoveAndCopy) {
-                                    copySourceAndDestination(
-                                        entity.path, currentDirectory);
-                                  }
-                                  sourceAndDestination.forEach((key, value) {
-                                    copyItems(key, value);
-                                  });
-                                  for (FileSystemEntity entity
-                                      in itemToMoveAndCopy) {
-                                    deleteItems(entity.path);
-                                  }
+                                sourceAndDestination.forEach((key, value) {
+                                  copyItems(key, value);
+                                });
+                              }
+                              // Move
+                              if (copyOrMove == "move") {
+                                for (FileSystemEntity entity
+                                    in itemToMoveAndCopy) {
+                                  copySourceAndDestination(
+                                      entity.path, currentDirectory);
                                 }
-
-                                // // Rename
-                                // if (copyOrMove == "rename") {
-                                //   for (FileSystemEntity entity
-                                //       in itemToMoveAndCopy) {
-                                //     _popUpInput(context, "Rename", entity.path);
-                                //   }
-                                // }
-
-                                // delete
-                                if (copyOrMove == "delete") {
-                                  for (FileSystemEntity entity
-                                      in itemToMoveAndCopy) {
-                                    deleteItems(entity.path);
-                                  }
+                                sourceAndDestination.forEach((key, value) {
+                                  copyItems(key, value);
+                                });
+                                for (FileSystemEntity entity
+                                    in itemToMoveAndCopy) {
+                                  deleteItems(entity.path);
                                 }
+                              }
 
-                                itemToMoveAndCopy = [];
-                                widget.itemToMoveAndCopy = [];
-                                copyOrMove = "";
-                                widget.copyOrMove = "";
-                                _refreshVaultPage();
-                              });
-                            },
-                          ),
+                              // // Rename
+                              // if (copyOrMove == "rename") {
+                              //   for (FileSystemEntity entity
+                              //       in itemToMoveAndCopy) {
+                              //     _popUpInput(context, "Rename", entity.path);
+                              //   }
+                              // }
+
+                              // delete
+                              if (copyOrMove == "delete") {
+                                for (FileSystemEntity entity
+                                    in itemToMoveAndCopy) {
+                                  deleteItems(entity.path);
+                                }
+                              }
+
+                              itemToMoveAndCopy = [];
+                              widget.itemToMoveAndCopy = [];
+                              copyOrMove = "";
+                              widget.copyOrMove = "";
+                              _refreshVaultPage();
+                            });
+                          },
                         ),
-                      ],
-                    ))
+                      ),
+                    ],
+                  ),
+                ),
+              // if (itemsInFolder(widget.setdir).substring(0) == '0' &&
+              //     itemsInFolder(widget.setdir).substring(13) == '0')
+              //   Container(
+              //       height: 55,
+              //       color: const Color.fromARGB(255, 145, 144, 144),
+              //       child: const Row(children: [
+              //         Expanded(
+              //           child: Text('0 Files / 0 Folders'),
+              //         ),
+              //       ]))
             ],
           ),
         ),
@@ -528,6 +567,15 @@ class _VaultPageState extends State<VaultPage> {
       ),
     );
   } // @overide Build()
+
+  int findLastIndexOfBackPath(List<String> list, String value) {
+    for (int i = list.length - 1; i >= 0; i--) {
+      if (list[i] == value) {
+        return i;
+      }
+    }
+    return list.indexOf('MySecretFolder'); // Value not found in the list
+  }
 
   renameItems(String current, String renameto) {
     if (File(current).existsSync()) {
@@ -843,6 +891,14 @@ class _VaultPageState extends State<VaultPage> {
     if (value == 'createFile') {
       _popUpInput(context, "Create File");
     }
+    if (value == 'goToSetpassword') {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const SetPassword(
+                    title: 'Reset Password',
+                  )));
+    }
   }
 
   String itemsInFolder(String path) {
@@ -866,7 +922,7 @@ class _VaultPageState extends State<VaultPage> {
     } else {
       debugPrint('Directory not found.');
     }
-    return '$folderCount Folders/$fileCount Files';
+    return '$folderCount Folders / $fileCount Files';
   }
 
   String fileSize(String path) {
