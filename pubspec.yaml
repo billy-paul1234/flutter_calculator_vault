@@ -46,7 +46,10 @@ dependencies:
   open_file: ^3.2.1 
   file_selector: ^1.0.0
   path: ^1.8.3
-
+  # progress_dialog: ^1.2.4
+  progress_dialog_null_safe: ^1.0.7
+  future_progress_dialog: ^0.2.1
+  # flushbar: ^1.10.3
 
 dev_dependencies:
   flutter_test:

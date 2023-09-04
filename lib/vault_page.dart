@@ -12,6 +12,7 @@ import 'package:flutter_calculator_vault/set_password.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:progress_dialog_null_safe/progress_dialog_null_safe.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:file_selector/file_selector.dart';
 // import 'package:permission_handler/permission_handler.dart';
@@ -78,6 +79,28 @@ class _VaultPageState extends State<VaultPage> {
   @override
   Widget build(BuildContext context) {
     List<FileSystemEntity> _itemsInFolder = Directory(widget.setdir).listSync();
+    ProgressDialog pr = ProgressDialog(context);
+//For normal dialog
+// pr = ProgressDialog(context,type: ProgressDialogType.Normal, isDismissible: true/false, showLogs: true/false);
+
+//For showing progress percentage
+    pr = ProgressDialog(context,
+        type: ProgressDialogType.download, isDismissible: true, showLogs: true);
+    pr.style(
+        message: 'Downloading file...',
+        borderRadius: 10.0,
+        backgroundColor: Colors.white,
+        progressWidget: CircularProgressIndicator(),
+        elevation: 10.0,
+        insetAnimCurve: Curves.easeInOut,
+        progress: 0.0,
+        // textDirection: TextDirection.rtl,
+        maxProgress: 100.0,
+        progressTextStyle: TextStyle(
+            color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
+        messageTextStyle: TextStyle(
+            color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600));
+            
     if (backPathHeaderbool) _backPathHeader();
     debugPrint('backPathHeader: $backPathHeader');
 
@@ -115,10 +138,10 @@ class _VaultPageState extends State<VaultPage> {
         title: 'Calculator Page',
       );
     }
-    debugPrint('Selected items bool: ${selectedItems.isEmpty}');
-    debugPrint('itemsToMoveAndCopy bool: ${itemToMoveAndCopy.isEmpty}');
-    debugPrint('widget.copyOrMove bool: ${widget.copyOrMove}');
-    debugPrint('copyOrMove bool: $copyOrMove');
+    // debugPrint('Selected items bool: ${selectedItems.isEmpty}');
+    // debugPrint('itemsToMoveAndCopy bool: ${itemToMoveAndCopy.isEmpty}');
+    // debugPrint('widget.copyOrMove bool: ${widget.copyOrMove}');
+    // debugPrint('copyOrMove bool: $copyOrMove');
 
     // // if (selectedItems.isNotEmpty)
     // for (var i in selectedItems) {
@@ -127,10 +150,10 @@ class _VaultPageState extends State<VaultPage> {
     // for (var i in itemToMoveAndCopy) {
     //   debugPrint('itemsToMoveAndCopy: ${i.path}');
     // }
-    debugPrint('#####################################################');
-    debugPrint(itemsInFolder(widget.setdir).substring(0, 1));
-    debugPrint(itemsInFolder(widget.setdir).substring(12, 13));
-    debugPrint('#####################################################');
+    // debugPrint('#####################################################');
+    // debugPrint(itemsInFolder(widget.setdir).substring(0, 1));
+    // debugPrint(itemsInFolder(widget.setdir).substring(12, 13));
+    // debugPrint('#####################################################');
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 97, 96, 96),
@@ -456,41 +479,43 @@ class _VaultPageState extends State<VaultPage> {
                         child: IconButton(
                           icon: const Icon(Icons.check),
                           onPressed: () {
-                            setState(() {
+                            setState(() async {
                               debugPrint('copyOrMove string: $copyOrMove');
                               // copy
                               if (copyOrMove == "copy") {
-                                showCopyingDialog(context, 'Copying');
+                                await pr.show();
                                 for (FileSystemEntity entity
                                     in itemToMoveAndCopy) {
-                                  copySourceAndDestination(
+                                  await copySourceAndDestination(
                                       entity.path, currentDirectory);
                                 }
-                                sourceAndDestination.forEach((key, value) {
-                                  copyItems(key, value);
+                                sourceAndDestination
+                                    .forEach((key, value) async {
+                                  await copyItems(key, value);
                                 });
-                                Future.delayed(Duration(seconds: 1), () {
-                                  Navigator.of(context).pop();
-                                });
+                                await pr.hide();
                               }
                               // Move
                               if (copyOrMove == "move") {
-                                showCopyingDialog(context, 'Moving');
+                                await pr.show();
+                                // showCopyingDialog(context, 'Moving');
                                 for (FileSystemEntity entity
                                     in itemToMoveAndCopy) {
-                                  copySourceAndDestination(
+                                  await copySourceAndDestination(
                                       entity.path, currentDirectory);
                                 }
-                                sourceAndDestination.forEach((key, value) {
-                                  copyItems(key, value);
+                                sourceAndDestination
+                                    .forEach((key, value) async {
+                                  await copyItems(key, value);
                                 });
                                 for (FileSystemEntity entity
                                     in itemToMoveAndCopy) {
-                                  deleteItems(entity.path);
+                                  await deleteItems(entity.path);
                                 }
-                                Future.delayed(Duration(seconds: 1), () {
-                                  Navigator.of(context).pop();
-                                });
+                                // Future.delayed(Duration(seconds: 1), () {
+                                //   Navigator.of(context).pop();
+                                // });
+                                await pr.hide();
                               }
 
                               // // Rename
@@ -503,14 +528,22 @@ class _VaultPageState extends State<VaultPage> {
 
                               // delete
                               if (copyOrMove == "delete") {
-                                showCopyingDialog(context, 'Deleting');
+                                // progressDialog.style(
+                                //   message: 'Copying file...',
+                                //   messageTextStyle: TextStyle(fontSize: 20.0),
+                                // );
+
+                                // progressDialog.show();
+                                await pr.show();
+                                // showCopyingDialog(context, 'Deleting');
                                 for (FileSystemEntity entity
                                     in itemToMoveAndCopy) {
-                                  deleteItems(entity.path);
+                                  await deleteItems(entity.path);
                                 }
-                                Future.delayed(Duration(seconds: 1), () {
-                                  Navigator.of(context).pop();
-                                });
+                                // Future.delayed(Duration(seconds: 1), () {
+                                //   Navigator.of(context).pop();
+                                // });
+                                await pr.hide();
                               }
 
                               itemToMoveAndCopy = [];
@@ -555,18 +588,18 @@ class _VaultPageState extends State<VaultPage> {
                   _showBottomSheet(context, 'No files selected.');
                   // popUpStatement("Empty folder");
                   return;
+                } else {
+                  await pr.show();
+                  for (var file in result.files) {
+                    // ignore: use_build_context_synchronously
+                    File newFile = File(
+                      "${widget.setdir}/${file.name}",
+                    );
+                    await copyItems(file.path!, newFile.path);
+                    // File(file.path!).copy(newFile.path);
+                  }
+                  await pr.hide();
                 }
-                showCopyingDialog(context, 'Adding');
-                for (var file in result.files) {
-                  // ignore: use_build_context_synchronously
-                  File newFile = File(
-                    "${widget.setdir}/${file.name}",
-                  );
-                  File(file.path!).copy(newFile.path);
-                }
-                Future.delayed(Duration(seconds: 1), () {
-                  Navigator.of(context).pop();
-                });
                 _refreshVaultPage();
               },
               tooltip: 'Add file',
@@ -578,14 +611,14 @@ class _VaultPageState extends State<VaultPage> {
     );
   } // @overide Build()
 
-  int findLastIndexOfBackPath(List<String> list, String value) {
-    for (int i = list.length - 1; i >= 0; i--) {
-      if (list[i] == value) {
-        return i;
-      }
-    }
-    return list.indexOf('MySecretFolder'); // Value not found in the list
-  }
+  // int findLastIndexOfBackPath(List<String> list, String value) {
+  //   for (int i = list.length - 1; i >= 0; i--) {
+  //     if (list[i] == value) {
+  //       return i;
+  //     }
+  //   }
+  //   return list.indexOf('MySecretFolder'); // Value not found in the list
+  // }
 
   renameItems(String current, String renameto) {
     if (File(current).existsSync()) {
@@ -608,7 +641,7 @@ class _VaultPageState extends State<VaultPage> {
     }
   }
 
-  void deleteItems(String path) {
+  deleteItems(String path) {
     final file = File(path);
     if (file.existsSync()) {
       try {
@@ -633,6 +666,7 @@ class _VaultPageState extends State<VaultPage> {
     } else {
       debugPrint('Directory does not exist.');
     }
+    return;
   }
 
   void _showBottomSheet(BuildContext context, String string) {
@@ -701,7 +735,7 @@ class _VaultPageState extends State<VaultPage> {
     );
   }
 
-  void copySourceAndDestination(String sourcePath, String destinationPath) {
+  copySourceAndDestination(String sourcePath, String destinationPath) {
     final sourceFile = File(sourcePath);
     if (File(sourcePath).existsSync()) {
       if (!File('$destinationPath/${sourceFile.uri.pathSegments.last}')
@@ -725,9 +759,10 @@ class _VaultPageState extends State<VaultPage> {
       }
       debugPrint('$sourcePath is a directory.');
     }
+    return;
   }
 
-  void copyItems(String sourcePath, String destinationPath) {
+  copyItems(String sourcePath, String destinationPath) {
     if (File(sourcePath).existsSync()) {
       if (!File(destinationPath).existsSync()) {
         File(sourcePath).copySync(destinationPath);
@@ -737,6 +772,7 @@ class _VaultPageState extends State<VaultPage> {
         Directory(destinationPath).createSync();
       }
     }
+    return;
   }
 
   void _handleFileTap(File file) {
