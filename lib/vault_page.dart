@@ -8,9 +8,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calculator_vault/calculator_page.dart';
 import 'package:flutter_calculator_vault/set_password.dart';
+// import 'package:flutter_calculator_vault/show_copying_dialog.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path/path.dart' as path;
-// ignore: unused_import
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:file_selector/file_selector.dart';
@@ -77,6 +77,7 @@ class _VaultPageState extends State<VaultPage> {
 
   @override
   Widget build(BuildContext context) {
+    List<FileSystemEntity> _itemsInFolder = Directory(widget.setdir).listSync();
     if (backPathHeaderbool) _backPathHeader();
     debugPrint('backPathHeader: $backPathHeader');
 
@@ -127,10 +128,9 @@ class _VaultPageState extends State<VaultPage> {
     //   debugPrint('itemsToMoveAndCopy: ${i.path}');
     // }
     debugPrint('#####################################################');
-    debugPrint(itemsInFolder(widget.setdir).substring(0,1));
-    debugPrint(itemsInFolder(widget.setdir).substring(12,13));
+    debugPrint(itemsInFolder(widget.setdir).substring(0, 1));
+    debugPrint(itemsInFolder(widget.setdir).substring(12, 13));
     debugPrint('#####################################################');
-
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 97, 96, 96),
@@ -219,7 +219,7 @@ class _VaultPageState extends State<VaultPage> {
                         copyOrMove: copyOrMove,
                       )));
           return true;
-          },
+        },
         child: RefreshIndicator(
           onRefresh: _refresh,
           child: Column(
@@ -460,6 +460,7 @@ class _VaultPageState extends State<VaultPage> {
                               debugPrint('copyOrMove string: $copyOrMove');
                               // copy
                               if (copyOrMove == "copy") {
+                                showCopyingDialog(context, 'Copying');
                                 for (FileSystemEntity entity
                                     in itemToMoveAndCopy) {
                                   copySourceAndDestination(
@@ -468,9 +469,13 @@ class _VaultPageState extends State<VaultPage> {
                                 sourceAndDestination.forEach((key, value) {
                                   copyItems(key, value);
                                 });
+                                Future.delayed(Duration(seconds: 1), () {
+                                  Navigator.of(context).pop();
+                                });
                               }
                               // Move
                               if (copyOrMove == "move") {
+                                showCopyingDialog(context, 'Moving');
                                 for (FileSystemEntity entity
                                     in itemToMoveAndCopy) {
                                   copySourceAndDestination(
@@ -483,6 +488,9 @@ class _VaultPageState extends State<VaultPage> {
                                     in itemToMoveAndCopy) {
                                   deleteItems(entity.path);
                                 }
+                                Future.delayed(Duration(seconds: 1), () {
+                                  Navigator.of(context).pop();
+                                });
                               }
 
                               // // Rename
@@ -495,10 +503,14 @@ class _VaultPageState extends State<VaultPage> {
 
                               // delete
                               if (copyOrMove == "delete") {
+                                showCopyingDialog(context, 'Deleting');
                                 for (FileSystemEntity entity
                                     in itemToMoveAndCopy) {
                                   deleteItems(entity.path);
                                 }
+                                Future.delayed(Duration(seconds: 1), () {
+                                  Navigator.of(context).pop();
+                                });
                               }
 
                               itemToMoveAndCopy = [];
@@ -513,16 +525,7 @@ class _VaultPageState extends State<VaultPage> {
                     ],
                   ),
                 ),
-              // if (itemsInFolder(widget.setdir).substring(0) == '0' &&
-              //     itemsInFolder(widget.setdir).substring(13) == '0')
-              //   Container(
-              //       height: 55,
-              //       color: const Color.fromARGB(255, 145, 144, 144),
-              //       child: const Row(children: [
-              //         Expanded(
-              //           child: Text('0 Files / 0 Folders'),
-              //         ),
-              //       ]))
+              if (_itemsInFolder.isEmpty) popUpStatement("Empty folder"),
             ],
           ),
         ),
@@ -548,15 +551,22 @@ class _VaultPageState extends State<VaultPage> {
                     await FilePicker.platform.pickFiles(allowMultiple: true);
                 if (result == null) {
                   debugPrint('No files selected.');
+                  // ignore: use_build_context_synchronously
+                  _showBottomSheet(context, 'No files selected.');
+                  // popUpStatement("Empty folder");
                   return;
                 }
-
+                showCopyingDialog(context, 'Adding');
                 for (var file in result.files) {
+                  // ignore: use_build_context_synchronously
                   File newFile = File(
                     "${widget.setdir}/${file.name}",
                   );
                   File(file.path!).copy(newFile.path);
                 }
+                Future.delayed(Duration(seconds: 1), () {
+                  Navigator.of(context).pop();
+                });
                 _refreshVaultPage();
               },
               tooltip: 'Add file',
@@ -625,9 +635,74 @@ class _VaultPageState extends State<VaultPage> {
     }
   }
 
+  void _showBottomSheet(BuildContext context, String string) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        Future.delayed(const Duration(seconds: 1), () {
+          Navigator.of(context).pop();
+        });
+
+        return Container(
+          color: Colors.white,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                string,
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: Colors.black,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              // ListTile(
+              //   leading: const Icon(Icons.music_note),
+              //   title: const Text('Music'),
+              //   onTap: () {
+              //     // Handle music selection
+              //     Navigator.pop(context);
+              //   },
+              // ),
+              // ListTile(
+              //   leading: const Icon(Icons.photo),
+              //   title: const Text('Photos'),
+              //   onTap: () {
+              //     // Handle photo selection
+              //     Navigator.pop(context);
+              //   },
+              // ),
+              // Add more items as needed
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void showCopyingDialog(BuildContext context, String string) {
+    showDialog(
+      context: context,
+      barrierDismissible:
+          false, // Prevent dismissing the dialog by tapping outside
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(string),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(), // Show a loading indicator
+              const SizedBox(height: 16.0), // Add some space
+              Text('$string in progress...'), // Display a message
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   void copySourceAndDestination(String sourcePath, String destinationPath) {
     final sourceFile = File(sourcePath);
-
     if (File(sourcePath).existsSync()) {
       if (!File('$destinationPath/${sourceFile.uri.pathSegments.last}')
           .existsSync()) {
@@ -984,5 +1059,23 @@ class _VaultPageState extends State<VaultPage> {
       }
     }
     return true;
+  }
+
+  Widget popUpStatement(String s) {
+    return Container(
+        height: 35,
+        color: const Color.fromARGB(255, 255, 255, 255),
+        child: Row(children: [
+          Expanded(
+            child: Text(
+              s,
+              style: const TextStyle(
+                fontSize: 15,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ]));
   }
 }
