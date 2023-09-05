@@ -2,6 +2,7 @@
 // ignore_for_file: unused_import, unnecessary_import
 
 import 'dart:io';
+import 'dart:isolate';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
@@ -56,24 +57,14 @@ class _VaultPageState extends State<VaultPage> {
   Map<String, dynamic> sourceAndDestination = {};
   List<String> backPathHeader = [];
   bool backPathHeaderbool = true;
+  List<int> copyingFileSize = [];
+  int copyingTotalFileSize = 0;
+  int currentlyCoping = 0;
 
   @override
   void initState() {
     super.initState();
     _loadFilesAndFolders();
-  }
-
-  _backPathHeader() async {
-    List<String> tmpList = path.split(widget.setdir);
-    // appStorage = await getApplicationDocumentsDirectory();
-    for (int i = tmpList.indexOf('MySecretFolder') + 2;
-        i <= tmpList.length;
-        i++) {
-      // debugPrint('/${tmpList.sublist(0, i).join('/')}');
-      backPathHeader
-          .add(tmpList.sublist(tmpList.indexOf('MySecretFolder'), i).join('/'));
-    }
-    backPathHeaderbool = false;
   }
 
   @override
@@ -100,7 +91,7 @@ class _VaultPageState extends State<VaultPage> {
             color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
         messageTextStyle: TextStyle(
             color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600));
-            
+
     if (backPathHeaderbool) _backPathHeader();
     debugPrint('backPathHeader: $backPathHeader');
 
@@ -328,7 +319,7 @@ class _VaultPageState extends State<VaultPage> {
                               : const Color.fromARGB(255, 239, 156, 48)),
                           subtitle: Text(
                             (entity is File
-                                ? fileSize(entity.path)
+                                ? fileSize(entity.path, null)
                                 : itemsInFolder(entity.path)),
                             style: const TextStyle(color: Colors.black),
                           ),
@@ -423,9 +414,9 @@ class _VaultPageState extends State<VaultPage> {
                                     in itemToMoveAndCopy) {
                                   _popUpInput(context, "Rename", entity.path);
                                 }
+                                itemToMoveAndCopy = [];
+                                debugPrint("Renameing.........$copyOrMove....");
                               }
-                              itemToMoveAndCopy = [];
-                              debugPrint("Renameing.........$copyOrMove....");
                             });
                           },
                         ),
@@ -478,80 +469,118 @@ class _VaultPageState extends State<VaultPage> {
                       Expanded(
                         child: IconButton(
                           icon: const Icon(Icons.check),
-                          onPressed: () {
-                            setState(() async {
-                              debugPrint('copyOrMove string: $copyOrMove');
-                              // copy
-                              if (copyOrMove == "copy") {
-                                await pr.show();
-                                for (FileSystemEntity entity
-                                    in itemToMoveAndCopy) {
-                                  await copySourceAndDestination(
-                                      entity.path, currentDirectory);
+                          onPressed: () async {
+                            // int i = 0;
+                            // setState(() async {
+                            debugPrint('copyOrMove string: $copyOrMove');
+
+                            // copy
+                            cp() async {
+                              for (FileSystemEntity entity
+                                  in itemToMoveAndCopy) {
+                                await copySourceAndDestination(
+                                    entity.path, currentDirectory);
+                              }
+                              sourceAndDestination
+                                    .forEach((key, value) async {
+                                if (File(key).existsSync()) {
+                                  var file = File(key);
+                                  int size = file.lengthSync();
+                                  copyingFileSize.add(size);
+                                  copyingTotalFileSize += size;
                                 }
+                                });
+                              setState(() {});
+                              sourceAndDestination.forEach((key, value) async {
+                                debugPrint('$key ; $value');
+                              });
+                            }
+
+                            show(String txt) {
+                              showDialog(
+                                context: context,
+                                barrierDismissible:
+                                    false, // Prevent dismissing the dialog by tapping outside
+                                builder: (BuildContext context) {
+                                  // if (i == copyingFileSize.length)
+
+                                  return AlertDialog(
+                                    title: Text('$txt:'),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                            'Process: $currentlyCoping/${copyingFileSize.length}'),
+                                        Text('/${fileSize('', copyingTotalFileSize)}'),
+                                        const CircularProgressIndicator(),
+                                        const SizedBox(height: 16.0),
+                                        Text('$txt in progress...'),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            }
+
+                            if (copyOrMove == "copy") {
+                              await cp();
+                              await show('Copying');
+
+                              Future.delayed(Duration(seconds: 1), () {
                                 sourceAndDestination
                                     .forEach((key, value) async {
-                                  await copyItems(key, value);
+                                  debugPrint('$key : $value');
+                                  // await isolatefun(key, value);
+                                  copyItems(key, value);
+                                  setState(() {
+                                    currentlyCoping++;
+                                  });
                                 });
-                                await pr.hide();
-                              }
-                              // Move
-                              if (copyOrMove == "move") {
-                                await pr.show();
-                                // showCopyingDialog(context, 'Moving');
-                                for (FileSystemEntity entity
-                                    in itemToMoveAndCopy) {
-                                  await copySourceAndDestination(
-                                      entity.path, currentDirectory);
-                                }
+                                Navigator.of(context).pop();
+                                _refresh();
+                              });
+                            }
+
+                            // Move
+                            if (copyOrMove == "move") {
+                              await cp();
+                              await show('moveing');
+                              // await pr.show();
+                              Future.delayed(Duration(seconds: 1), () {
                                 sourceAndDestination
                                     .forEach((key, value) async {
+                                  // currentlyCoping=
                                   await copyItems(key, value);
+                                  await deleteItems(key);
                                 });
-                                for (FileSystemEntity entity
-                                    in itemToMoveAndCopy) {
-                                  await deleteItems(entity.path);
-                                }
-                                // Future.delayed(Duration(seconds: 1), () {
-                                //   Navigator.of(context).pop();
-                                // });
-                                await pr.hide();
+                                Navigator.of(context).pop();
+                                _refresh();
+                              });
+                              // await pr.hide();
+                            }
+
+                            // delete
+                            if (copyOrMove == "delete") {
+                              // await cp();
+                              // await show('deleting');
+                              for (FileSystemEntity entity
+                                  in itemToMoveAndCopy) {
+                                await deleteItems(entity.path);
                               }
+                              _refresh();
+                              // Future.delayed(Duration(seconds: 1), () async {
+                              //   Navigator.of(context).pop();
+                              // });
+                            }
 
-                              // // Rename
-                              // if (copyOrMove == "rename") {
-                              //   for (FileSystemEntity entity
-                              //       in itemToMoveAndCopy) {
-                              //     _popUpInput(context, "Rename", entity.path);
-                              //   }
-                              // }
-
-                              // delete
-                              if (copyOrMove == "delete") {
-                                // progressDialog.style(
-                                //   message: 'Copying file...',
-                                //   messageTextStyle: TextStyle(fontSize: 20.0),
-                                // );
-
-                                // progressDialog.show();
-                                await pr.show();
-                                // showCopyingDialog(context, 'Deleting');
-                                for (FileSystemEntity entity
-                                    in itemToMoveAndCopy) {
-                                  await deleteItems(entity.path);
-                                }
-                                // Future.delayed(Duration(seconds: 1), () {
-                                //   Navigator.of(context).pop();
-                                // });
-                                await pr.hide();
-                              }
-
+                            setState(() {
                               itemToMoveAndCopy = [];
                               widget.itemToMoveAndCopy = [];
                               copyOrMove = "";
                               widget.copyOrMove = "";
                               _refreshVaultPage();
                             });
+                            // });
                           },
                         ),
                       ),
@@ -595,8 +624,8 @@ class _VaultPageState extends State<VaultPage> {
                     File newFile = File(
                       "${widget.setdir}/${file.name}",
                     );
-                    await copyItems(file.path!, newFile.path);
-                    // File(file.path!).copy(newFile.path);
+                    // int i = await copyItems(file.path!, newFile.path);
+                    File(file.path!).copy(newFile.path);
                   }
                   await pr.hide();
                 }
@@ -619,6 +648,19 @@ class _VaultPageState extends State<VaultPage> {
   //   }
   //   return list.indexOf('MySecretFolder'); // Value not found in the list
   // }
+
+  _backPathHeader() async {
+    List<String> tmpList = path.split(widget.setdir);
+    // appStorage = await getApplicationDocumentsDirectory();
+    for (int i = tmpList.indexOf('MySecretFolder') + 2;
+        i <= tmpList.length;
+        i++) {
+      // debugPrint('/${tmpList.sublist(0, i).join('/')}');
+      backPathHeader
+          .add(tmpList.sublist(tmpList.indexOf('MySecretFolder'), i).join('/'));
+    }
+    backPathHeaderbool = false;
+  }
 
   renameItems(String current, String renameto) {
     if (File(current).existsSync()) {
@@ -725,6 +767,8 @@ class _VaultPageState extends State<VaultPage> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // Text('$copyingTotalFileSize'),
+              // Text('$copyingTotalFileSize'),
               const CircularProgressIndicator(), // Show a loading indicator
               const SizedBox(height: 16.0), // Add some space
               Text('$string in progress...'), // Display a message
@@ -762,7 +806,65 @@ class _VaultPageState extends State<VaultPage> {
     return;
   }
 
-  copyItems(String sourcePath, String destinationPath) {
+  // Future<int> copyItems(List<dynamic> arg) async {
+  //   SendPort resultPort = arg[0];
+  //   String sourcePath = arg[1];
+  //   String destinationPath = arg[2];
+  //   debugPrint(
+  //       'sourcePath: $sourcePath \n destinationPath $destinationPath #############################################################################################################');
+
+  //   Isolate.exit(resultPort, 1);
+  // }
+
+  // isolatefun(String key, String value) async {
+  //   final ReceivePort receivePort = ReceivePort();
+  //   try {
+  //     await Isolate.spawn(copyItems, [receivePort.sendPort, key, value]);
+  //   } catch (e) {
+  //     print("Error By isolate: $e");
+  //     receivePort.close();
+  //   }
+  //   final res = receivePort.first;
+  //   debugPrint('result: $res');
+  // }
+
+  Future<int> copyItemsWithIsolate(List<dynamic> arg) async {
+    SendPort resultPort = arg[0];
+    String sourcePath = arg[1];
+    String destinationPath = arg[2];
+    for (int i = 0; i < 20; i++) {
+      await Future.delayed(Duration(seconds: 3));
+      print(
+          'sourcePath: $sourcePath \n destinationPath $destinationPath ##############');
+      if (File(sourcePath).existsSync()) {
+        if (!File(destinationPath).existsSync()) {
+          File(sourcePath).copySync(destinationPath);
+        }
+      } else if (Directory(sourcePath).existsSync()) {
+        if (!Directory(destinationPath).existsSync()) {
+          Directory(destinationPath).createSync();
+        }
+      }
+      resultPort.send("Result from Function 1");
+    }
+
+    Isolate.exit(resultPort, 1);
+  }
+
+  isolatefun(String key, String value) async {
+    final ReceivePort receivePort = ReceivePort();
+    try {
+      await Isolate.spawn(
+          copyItemsWithIsolate, [receivePort.sendPort, key, value]);
+    } catch (e) {
+      print("Error By isolate: $e");
+      receivePort.close();
+    }
+    final res = receivePort.first;
+    print('result: $res');
+  }
+
+  int copyItems(String sourcePath, String destinationPath) {
     if (File(sourcePath).existsSync()) {
       if (!File(destinationPath).existsSync()) {
         File(sourcePath).copySync(destinationPath);
@@ -772,7 +874,7 @@ class _VaultPageState extends State<VaultPage> {
         Directory(destinationPath).createSync();
       }
     }
-    return;
+    return 1;
   }
 
   void _handleFileTap(File file) {
@@ -1036,11 +1138,15 @@ class _VaultPageState extends State<VaultPage> {
     return '$folderCount Folders / $fileCount Files';
   }
 
-  String fileSize(String path) {
-    if (path == "") return "";
+  String fileSize(String? path, int? copyingTotalFileSize) {
+    var size = 0;
+    if (copyingTotalFileSize == null) {
+      var file = File(path!);
+      size = file.lengthSync();
+    } else {
+      size = copyingTotalFileSize as int;
+    }
 
-    var file = File(path);
-    var size = file.lengthSync();
     String Size = size >= 1000000000
         ? '${(size / 1000000000).toStringAsFixed(2)} GB'
         : (size >= 1000000
