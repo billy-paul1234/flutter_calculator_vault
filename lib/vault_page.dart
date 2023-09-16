@@ -59,7 +59,9 @@ class _VaultPageState extends State<VaultPage> {
   bool backPathHeaderbool = true;
   List<int> copyingFileSize = [];
   int copyingTotalFileSize = 0;
-  int currentlyCoping = 0;
+  int currentlyCopingFileSize = 0;
+
+  List<int> currentlyCoping = [];
 
   @override
   void initState() {
@@ -93,7 +95,7 @@ class _VaultPageState extends State<VaultPage> {
             color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600));
 
     if (backPathHeaderbool) _backPathHeader();
-    debugPrint('backPathHeader: $backPathHeader');
+    // debugPrint('backPathHeader: $backPathHeader');
 
     currentDirectory = widget.setdir;
     if (widget.copyOrMove == 'copy' || copyOrMove == 'copy') {
@@ -481,22 +483,22 @@ class _VaultPageState extends State<VaultPage> {
                                 await copySourceAndDestination(
                                     entity.path, currentDirectory);
                               }
-                              sourceAndDestination
-                                    .forEach((key, value) async {
+                              sourceAndDestination.forEach((key, value) async {
                                 if (File(key).existsSync()) {
                                   var file = File(key);
                                   int size = file.lengthSync();
                                   copyingFileSize.add(size);
                                   copyingTotalFileSize += size;
                                 }
-                                });
+                              });
                               setState(() {});
                               sourceAndDestination.forEach((key, value) async {
-                                debugPrint('$key ; $value');
+                                // debugPrint('$key ; $value');
                               });
                             }
 
-                            show(String txt) {
+                            show(BuildContext context, String txt) {
+                              debugPrint('1.Returning in from show');
                               showDialog(
                                 context: context,
                                 barrierDismissible:
@@ -510,8 +512,9 @@ class _VaultPageState extends State<VaultPage> {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Text(
-                                            'Process: $currentlyCoping/${copyingFileSize.length}'),
-                                        Text('/${fileSize('', copyingTotalFileSize)}'),
+                                            'Process: ${currentlyCoping.length}/${copyingFileSize.length}'),
+                                        Text(
+                                            '${fileSize('', currentlyCopingFileSize)} / ${fileSize('', copyingTotalFileSize)}'),
                                         const CircularProgressIndicator(),
                                         const SizedBox(height: 16.0),
                                         Text('$txt in progress...'),
@@ -520,37 +523,65 @@ class _VaultPageState extends State<VaultPage> {
                                   );
                                 },
                               );
+
+                              debugPrint('2.Returning in from show');
+                              // return 2 as Future<int>;
+                            }
+
+                            count(String a) {
+                              while (
+                                  fileSize('', currentlyCopingFileSize) != a) {
+                                sourceAndDestination
+                                    .forEach((key, value) async {
+                                  if (File(value).existsSync()) {
+                                    var file = File(value);
+                                    int size = file.lengthSync();
+                                    currentlyCoping.add(size);
+                                    currentlyCopingFileSize += size;
+                                    setState(() {});
+                                    debugPrint(
+                                        ' process ---- ${currentlyCoping.length} , size --- ${fileSize('', currentlyCopingFileSize)}   ');
+                                  }
+                                });
+                              }
                             }
 
                             if (copyOrMove == "copy") {
                               await cp();
-                              await show('Copying');
+                              // ignore: unused_local_variable
+                              debugPrint('3.Returning in from show');
+                              // sourceAndDestination.forEach((key, value) async {
+                              //   debugPrint('$key : $value');
+                              //   copyItems(key, value);
+                              //   setState(() {
+                              //     currentlyCoping++;
+                              //   });
+                              // });
 
-                              Future.delayed(Duration(seconds: 1), () {
-                                sourceAndDestination
-                                    .forEach((key, value) async {
-                                  debugPrint('$key : $value');
-                                  // await isolatefun(key, value);
-                                  copyItems(key, value);
-                                  setState(() {
-                                    currentlyCoping++;
-                                  });
-                                });
-                                Navigator.of(context).pop();
-                                _refresh();
-                              });
+                              // currentlyCoping=0;
+                              copyItemsWithIsolate(
+                                  [sourceAndDestination, context]);
+                              // ignore: use_build_context_synchronously
+                              show(context, 'Copying');
+
+                              // while (currentlyCoping.length != copyingFileSize.length) {
+
+
+                              debugPrint('4.Returning in from show');
+
+                              debugPrint('6.Returning in from show');
                             }
 
                             // Move
                             if (copyOrMove == "move") {
                               await cp();
-                              await show('moveing');
+                              show(context, 'moveing');
                               // await pr.show();
                               Future.delayed(Duration(seconds: 1), () {
                                 sourceAndDestination
                                     .forEach((key, value) async {
                                   // currentlyCoping=
-                                  await copyItems(key, value);
+                                  copyItems(key, value);
                                   await deleteItems(key);
                                 });
                                 Navigator.of(context).pop();
@@ -588,6 +619,7 @@ class _VaultPageState extends State<VaultPage> {
                   ),
                 ),
               if (_itemsInFolder.isEmpty) popUpStatement("Empty folder"),
+              // const CircularProgressIndicator(),
             ],
           ),
         ),
@@ -801,73 +833,31 @@ class _VaultPageState extends State<VaultPage> {
               '$destinationPath/${sourceFile.uri.pathSegments.last}');
         }
       }
-      debugPrint('$sourcePath is a directory.');
+      // debugPrint('$sourcePath is a directory.');
     }
     return;
   }
 
-  // Future<int> copyItems(List<dynamic> arg) async {
-  //   SendPort resultPort = arg[0];
-  //   String sourcePath = arg[1];
-  //   String destinationPath = arg[2];
-  //   debugPrint(
-  //       'sourcePath: $sourcePath \n destinationPath $destinationPath #############################################################################################################');
-
-  //   Isolate.exit(resultPort, 1);
-  // }
-
-  // isolatefun(String key, String value) async {
+  // isolateCopy(String key, String value) async {
   //   final ReceivePort receivePort = ReceivePort();
   //   try {
-  //     await Isolate.spawn(copyItems, [receivePort.sendPort, key, value]);
+  //     await Isolate.spawn(copyItemsWithIsolate, [key, value]);
   //   } catch (e) {
   //     print("Error By isolate: $e");
   //     receivePort.close();
   //   }
   //   final res = receivePort.first;
-  //   debugPrint('result: $res');
+  //   print('result: $res');
   // }
 
-  Future<int> copyItemsWithIsolate(List<dynamic> arg) async {
-    SendPort resultPort = arg[0];
-    String sourcePath = arg[1];
-    String destinationPath = arg[2];
-    for (int i = 0; i < 20; i++) {
-      await Future.delayed(Duration(seconds: 3));
-      print(
-          'sourcePath: $sourcePath \n destinationPath $destinationPath ##############');
-      if (File(sourcePath).existsSync()) {
-        if (!File(destinationPath).existsSync()) {
-          File(sourcePath).copySync(destinationPath);
-        }
-      } else if (Directory(sourcePath).existsSync()) {
-        if (!Directory(destinationPath).existsSync()) {
-          Directory(destinationPath).createSync();
-        }
-      }
-      resultPort.send("Result from Function 1");
-    }
-
-    Isolate.exit(resultPort, 1);
-  }
-
-  isolatefun(String key, String value) async {
-    final ReceivePort receivePort = ReceivePort();
-    try {
-      await Isolate.spawn(
-          copyItemsWithIsolate, [receivePort.sendPort, key, value]);
-    } catch (e) {
-      print("Error By isolate: $e");
-      receivePort.close();
-    }
-    final res = receivePort.first;
-    print('result: $res');
-  }
-
-  int copyItems(String sourcePath, String destinationPath) {
+  Future<int> copyItems(String sourcePath, String destinationPath) async {
     if (File(sourcePath).existsSync()) {
       if (!File(destinationPath).existsSync()) {
-        File(sourcePath).copySync(destinationPath);
+        // File(sourcePath).copySync(destinationPath);
+        File sourceFile = File(sourcePath);
+        File destinationFile = File(destinationPath);
+
+        await sourceFile.copy(destinationFile.path);
       }
     } else if (Directory(sourcePath).existsSync()) {
       if (!Directory(destinationPath).existsSync()) {
@@ -1175,7 +1165,7 @@ class _VaultPageState extends State<VaultPage> {
     for (FileSystemEntity item in selectedItems) {
       if (path == item.path) {
         return const Color.fromARGB(255, 151, 191, 136);
-        break; // Exit the loop when the string is found
+        // break; // Exit the loop when the string is found
       }
     }
   }
@@ -1220,4 +1210,56 @@ class _VaultPageState extends State<VaultPage> {
           ),
         ]));
   }
+
+  Future<void> copyItemsWithIsolate(List<dynamic> argsList) async {
+    Map<String, dynamic> sourceAndDestination = argsList[0];
+    for (var key in sourceAndDestination.keys) {
+      String sourcePath = key;
+      String destinationPath = sourceAndDestination[key];
+
+      if (File(sourcePath).existsSync()) {
+        if (!File(destinationPath).existsSync()) {
+          // cpy([sourcePath, destinationPath]);
+          File sourceFile = File(sourcePath);
+          File destinationFile = File(destinationPath);
+
+          await sourceFile.copy(destinationFile.path);
+        }
+      } else if (Directory(sourcePath).existsSync()) {
+        if (!Directory(destinationPath).existsSync()) {
+          Directory(destinationPath).createSync();
+        }
+      }
+    }
+    Navigator.of(argsList[1]).pop();
+    _refresh();
+  }
 }
+
+
+// Future<void> copyItemsWithIsolate(List<dynamic> argsList) async {
+//   Map<String, dynamic> sourceAndDestination = argsList[0];
+
+//   debugPrint('copyItemsWithIsolate!!!!!!!!!!!!!!');
+
+//   for (var key in sourceAndDestination.keys) {
+//     debugPrint('copyItemsWithIsolate!!!!!!!!!!!!!!$key');
+//     String sourcePath = key;
+//     String destinationPath = sourceAndDestination[key];
+
+//     if (File(sourcePath).existsSync()) {
+//       if (!File(destinationPath).existsSync()) {
+//         // cpy([sourcePath, destinationPath]);
+//         File sourceFile = File(sourcePath);
+//         File destinationFile = File(destinationPath);
+
+//         await sourceFile.copy(destinationFile.path);
+//       }
+//     } else if (Directory(sourcePath).existsSync()) {
+//       if (!Directory(destinationPath).existsSync()) {
+//         Directory(destinationPath).createSync();
+//       }
+//     }
+//   }
+//   Navigator.of(argsList[1]).pop();
+// }
