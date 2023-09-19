@@ -8,11 +8,15 @@ This app has a Secret File system inside a Calculator.
 
 ## To install and run it:
 
-### `flutter pub get`
-To install the required packages.
+To install the required packages
 
-### `flutter run`
+* `git clone https://github.com/billy-paul1234/flutter_calculator_vault.git`
+* `cd flutter_calculator_vault`
+* `flutter pub get`
+
 To run the project
+  
+* `flutter run`
 
 ## SCREEN SHOTS [APK]
 
