@@ -43,8 +43,6 @@ To run the project
 
 ## <b>[RouterRD](https://github.com/billy-paul1234/RouterRD)</b> (Router Redundancy Detector)
 
-## <b>[Calculator Vault](https://github.com/billy-paul1234/flutter_calculator_vault)</b> (Calculator Vault App Using Flutter)
-
 ## <b>[ResumePdfToJsonOrCsv](https://github.com/billy-paul1234/ResumePdfToJsonOrCsv)</b> ( Convert resume pdf to json or csv )
 
 ## CONNECT ME IN:
