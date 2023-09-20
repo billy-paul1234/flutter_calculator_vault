@@ -36,3 +36,15 @@ To run the project
 <img width="40%" src="https://github.com/billy-paul1234/flutter_calculator_vault/assets/137751689/078d67fd-2566-4796-ac2d-544c414a1a32"/> <br><br>
 
 </p>
+
+## OTHER PROJECTS:
+
+<b>[arp-kill](https://github.com/billy-paul1234/arp-kill)</b>
+(Man In The Middle Attack Detection Tool)
+
+## CONNECT ME IN:
+
+[![Instagram](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://in.linkedin.com/in/billy-paul-913459270)
+
+[![Instagram](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:billypaul388@gmail.com)
+
